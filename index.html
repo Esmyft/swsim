@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+	<link type="text/css" rel="stylesheet" href="css/swsim.css"/>
+	<title>SWSIM</title>
+</head>
+
+<body>
+<!--<h1>SWSIM</h1>-->
+
+<div id="tabs-container">
+	<ul id="tabs-menu">
+		<li class="current"><a href="#tab-home">HOME</a></li>
+		<li><a href="#tab-load">LOAD</a></li>
+		<li><a href="#tab-sim">SIM</a></li>
+	</ul>
+
+	<div id="tabs">
+		<div id="home-tab" class="tab-content selected-tab">
+
+		</div>
+		<div id="load-tab" class="tab-content">
+		</div>
+		<div id="sim-tab" class="tab-content">
+			<div id="monster"> 
+				<!-- Top portion for the portrait, monster and awaken -->
+				<div id="monster-top">
+					<span class="box" id="monster-portrait-container">
+						<img src="img/soha-awakened.png" id="monster-portrait" />
+					</span>
+
+					<span class="box" id="monster-selection">
+						<div id="monster-name">
+							Monster:
+							<select name="monster-name" id="monster-selector">
+								<option disabled>WATER</option>
+								<option value="lapis" disabled>Lapis, the Water Magic Knight</option>
+								<option value="soha" selected>Soha, the Water Nine-Tailed Fox</option>
+							</select>
+						</div>
+
+						<div id="monster-awaken">
+							Has awakened:
+							<select name="monster-awakened" id="monster-awakened-selector">
+								<option value="yes" selected>Yes</option>
+								<option value="no">No</option>
+							</select>
+						</div>
+						<div id="monster-stars-level">
+							Stars:
+							<input type="text" id="monster-stars-input" value="6" onclick="this.select();"/>
+							Level:
+							<input type="text" id="monster-level-input" value="40" onclick="this.select();"/>
+						</div>
+					</span>
+
+					<span id="load-save-btn" class="button">LOAD / SAVE</span>
+				</div>
+			</div>
+
+			<div id="monster-stats">
+				<div id="monster-basic-stats">
+					<table>
+						<caption>
+							Monster Stats
+						</caption>
+
+						<tr>
+							<td>
+								HP
+							</td>
+							<td>
+								<input type="text" class="monster-basic-stat-input" value="6060" id="monster-basehp" onclick="this.select();" /> + 
+								<input type="text" class="monster-basic-stat-input" value="0" id="monster-addhp" onclick="this.select();" />
+							</td>
+
+							<td>
+								Crit Rate
+							</td>
+							<td>
+								<input type="text" class="monster-basic-stat-input" value="0" id="monster-critrate" onclick="this.select();"/>
+								<span class="input-addon">%</span>
+							</td>
+						</tr>
+
+						<tr>
+							<td>
+								Attack
+							</td>
+							<td>
+								<input type="text" class="monster-basic-stat-input" value="0" id="monster-baseatk" onclick="this.select();" /> + 
+								<input type="text" class="monster-basic-stat-input" value="0" id="monster-addatk" onclick="this.select();"/>
+							</td>
+							
+							<td>
+								Crit Dmg
+							</td>
+							<td>
+								<input type="text" class="monster-basic-stat-input" value="0" id="monster-critdmg" onclick="this.select();"/>
+								<span class="input-addon">%</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								Defense
+							</td>
+							<td>
+								<input type="text" class="monster-basic-stat-input" value="0" id="monster-basedef" onclick="this.select();" /> + 
+								<input type="text" class="monster-basic-stat-input" value="0" id="monster-adddef" onclick="this.select();"/>
+							</td>
+							
+							<td>
+								Resistance
+							</td>
+							<td>
+								<input type="text" class="monster-basic-stat-input" value="0" id="monster-resist" onclick="this.select();"/>
+								<span class="input-addon">%</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								Speed
+							</td>
+							<td>
+								<input type="text" class="monster-basic-stat-input" value="0" id="monster-basespd" onclick="this.select();" /> + 
+								<input type="text" class="monster-basic-stat-input" value="0" id="monster-addspd" onclick="this.select();"/>
+							</td>
+							
+							<td>
+								Accuracy
+							</td>
+							<td>
+								<input type="text" class="monster-basic-stat-input" value="0" id="monster-accuracy" onclick="this.select();"/>
+								<span class="input-addon">%</span>
+							</td>
+						</tr>															
+					</table>
+				</div>
+
+				<div id="runes-skill-level">
+					<table>
+						<caption>Rune sets:</caption>
+						<tr>
+							<td>
+								<select id="set1"  class="rune-set">
+									<option value="" selected>---</option>
+									<option value="shield">Shield: Ally shield for 3 turns</option>
+									<option value="revenge">Revenge: Counterattack +15%</option>
+									<option value="will">Will: Immunity +1 turn </option>
+									<option value="nemesis">Nemesis: Atk Gauge +4% per 7% HP lost</option>
+									<option value="vampire">Vampire: Life Drain +35%</option>
+									<option value="destroy">Destroy: Reduce up to 4% max HP</option>
+									<option value="despair">Despair: Stun rate +25%</option>
+									<option value="violent">Violent: 22% to get extra turn</option>						
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<select id="set2"  class="rune-set">
+									<option value="" selected>---</option>
+									<option value="shield">Shield: Ally shield for 3 turns</option>
+									<option value="revenge">Revenge: Counterattack +15%</option>
+									<option value="will">Will: Immunity +1 turn </option>
+									<option value="nemesis">Nemesis: Atk Gauge +4% per 7% HP lost</option>
+									<option value="vampire">Vampire: Life Drain +35%</option>
+									<option value="destroy">Destroy: Reduce up to 4% max HP</option>
+									<option value="despair">Despair: Stun rate +25%</option>
+									<option value="violent">Violent: 22% to get extra turn</option>						
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<select id="set3"  class="rune-set">
+									<option value="" selected>---</option>
+									<option value="shield">Shield: Ally shield for 3 turns</option>
+									<option value="revenge">Revenge: Counterattack +15%</option>
+									<option value="will">Will: Immunity +1 turn </option>
+									<option value="nemesis">Nemesis: Atk Gauge +4% per 7% HP lost</option>
+									<option value="vampire">Vampire: Life Drain +35%</option>
+									<option value="destroy">Destroy: Reduce up to 4% max HP</option>
+									<option value="despair">Despair: Stun rate +25%</option>
+									<option value="violent">Violent: 22% to get extra turn</option>						
+								</select>
+							</td>
+						</tr>
+					</table>
+
+					<table>
+						<caption>Skill levels</caption>
+						<tr>
+							<td>
+								Skill 1: <input type="text" class="skill-level-input" value="1" id="skill-1-level" onclick="this.select();" />
+							</td>
+							<td>
+								Skill 2: <input type="text" class="skill-level-input" value="1" id="skill-2-level" onclick="this.select();" />
+							</td>
+							<td>
+								Skill 3: <input type="text" class="skill-level-input" value="1" id="skill-3-level" onclick="this.select();" />
+							</td>
+							<td>
+								Skill 4: <input type="text" class="skill-level-input" value="1" id="skill-4-level" onclick="this.select();" />
+							</td>
+						</tr>
+					</table>
+				</div>
+
+				<div id="glory-buildings">
+					<table>
+						<caption>
+							Glory Buildings
+						</caption>
+						<tr>
+							<td>
+								Fire
+							</td>
+							<td>
+								<input type="text" class="glory-input" value="0" id="glory-fire" onclick="this.select();"/>
+								<span class="input-addon">%</span>
+							</td>
+
+							<td>
+								HP
+							</td>
+							<td>
+								<input type="text" class="glory-input" value="0" id="glory-hp" onclick="this.select();"/>
+								<span class="input-addon">%</span>
+							</td>
+						</tr>
+
+						<tr>
+							<td>
+								Water
+							</td>
+							<td>
+								<input type="text" class="glory-input" value="0" id="glory-water" onclick="this.select();"/>
+								<span class="input-addon">%</span>
+							</td>
+
+							<td>
+								Attack
+							</td>
+							<td>
+								<input type="text" class="glory-input" value="0" id="glory-attack" onclick="this.select();"/>
+								<span class="input-addon">%</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								Wind
+							</td>
+							<td>
+								<input type="text" class="glory-input" value="0" id="glory-wind" onclick="this.select();"/>
+								<span class="input-addon">%</span>
+							</td>
+
+							<td>
+								Defense
+							</td>
+							<td>
+								<input type="text" class="glory-input" value="0" id="glory-defense" onclick="this.select();"/>
+								<span class="input-addon">%</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								Light
+							</td>
+							<td>
+								<input type="text" class="glory-input" value="0" id="glory-light" onclick="this.select();"/>
+								<span class="input-addon">%</span>
+							</td>
+
+							<td>
+								Speed
+							</td>
+							<td>
+								<input type="text" class="glory-input" value="0" id="glory-speed" onclick="this.select();"/>
+								<span class="input-addon">%</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								Dark
+							</td>
+							<td>
+								<input type="text" class="glory-input" value="0" id="glory-dark" onclick="this.select();"/>
+								<span class="input-addon">%</span>
+							</td>
+
+							<td>
+								Crit Damage
+							</td>
+							<td>
+								<input type="text" class="glory-input" value="0" id="glory-critdamage" onclick="this.select();"/>
+								<span class="input-addon">%</span>
+							</td>
+						</tr>
+					</table>	
+
+				</div>
+			</div>
+
+			<div id="simulation">
+				<div id="simulation-left">
+					<div id="map-container">
+						Map:
+						<select name="map" id="map">
+							<option value="faimon-1-normal">Faimon 1 Normal</option>
+							<option value="faimon-1-hard" selected>Faimon 1 Hard</option>
+							<option value="faimon-1-hell">Faimon 1 Hell</option>
+						</select>
+					</div>
+					<div id="number-of-sim-container">
+						Number of simulations:
+						<input type="text" id="number-of-sim-input" value="1" onclick="this.select();" />
+					</div>
+					<div id="button-container">
+						<button id="start-button">Start</button>
+						<button id="stop-button">Stop</button>
+					</div>
+					<div id="sim-options">
+						<label><input type="checkbox" id="debug-mode-checkbox" value="debug_mode"> Debug mode</label>
+					</div>
+				</div>
+
+				<div id="simulation-right">
+					<div id="result-container"></div>
+					<div id="log-container"></div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+</div>
+<div id="load-container">
+	<div id="load-container-header">
+		<a></a>
+	</div>
+
+	<div id="load-body">
+		<div class="split-panel-section">
+			<span id="save-data-header">
+			Saved builds
+			</span>
+			<ul>
+				<li class="save-data" tabindex="0">Add new build...</li>
+				<li class="save-data" tabindex="0">Shinwa's Vampire/Blade Soha</li>
+				<li class="save-data" tabindex="0">Shinwa's Vampire/Energy Soha</li>
+			</ul>
+		</div>
+		<div class="split-panel-section">
+			<div id="build-name">
+				Build Name:<br />
+				<input type="text" id="build-name" value="" />
+				<span class="button" id="delete-button">DELETE</span>
+			</div>
+		</div>
+		<div id="load-footer">
+			<span class="button" id="load-button">Load</span>
+			<span class="button" id="save-button">Save</span>
+			<span class="button" id="cancel-button">Cancel</span>
+		</div>
+
+	</div>
+
+</div>
+<div id="backdrop"></div>
+
+<script type="text/javascript" src="js/tabs.js"></script>
+<script type="text/javascript" src="js/data.js"></script>
+<script type="text/javascript" src="js/swsim.js"></script>
+</body>
+</html>
