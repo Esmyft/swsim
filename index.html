@@ -28,7 +28,7 @@
 				<!-- Top portion for the portrait, monster and awaken -->
 				<div id="monster-top">
 					<span class="box" id="monster-portrait-container">
-						<img src="img/soha-awakened.png" id="monster-portrait" />
+						<img src="img/soha-awakened.png" class="monster-portrait" id="main-monster-portrait"/>
 					</span>
 
 					<span class="box" id="monster-selection">
@@ -347,17 +347,113 @@
 			<span id="save-data-header">
 			Saved builds
 			</span>
-			<ul>
+			<ul id="save-data-list">
 				<li class="save-data" tabindex="0">Add new build...</li>
-				<li class="save-data" tabindex="0">Shinwa's Vampire/Blade Soha</li>
-				<li class="save-data" tabindex="0">Shinwa's Vampire/Energy Soha</li>
 			</ul>
 		</div>
 		<div class="split-panel-section">
-			<div id="build-name">
+			<div id="load-build-name">
 				Build Name:<br />
 				<input type="text" id="build-name" value="" />
 				<span class="button" id="delete-button">DELETE</span>
+			</div>
+			<div id="load-monster-top">
+				<div id="load-monster-basic-info">
+					<img src="img/soha-awakened.png" class="monster-portrait" id="load-monster-portrait"/>
+					<img src="img/star-awakened.png" class="portrait-star portrait-star-1" />
+					<img src="img/star-awakened.png" class="portrait-star portrait-star-2" />
+					<img src="img/star-awakened.png" class="portrait-star portrait-star-3" />
+					<img src="img/star-awakened.png" class="portrait-star portrait-star-4" />
+					<img src="img/star-awakened.png" class="portrait-star portrait-star-5" />
+					<img src="img/star-awakened.png" class="portrait-star portrait-star-6" />
+					<span class="portrait-level">40</span>
+				</div>
+
+				<div id="load-monster-name">
+					Soha
+				</div>
+			</div>
+			<div id="load-monster-bottom">
+				<p>Special Set Effects: <span id="load-set-effects">None</span></p>
+				<table id="load-monster-stats-table">
+					<caption>Monster Stats:</caption>
+					<tbody>
+						<tr>
+							<td class="load-stat-1">HP</td>
+							<td class="load-stat-2"><span id="load-basehp">0</span></td>
+							<td class="load-stat-3">+<span id="load-addhp">0</span></td>
+							<td class="load-stat-4">CRI Rate</td>
+							<td class="load-stat-5"><span id="load-critrate">0</span>%</td>
+						</tr>
+						<tr>
+							<td class="load-stat-1">ATK</td>
+							<td class="load-stat-2"><span id="load-baseatk">0</span></td>
+							<td class="load-stat-3">+<span id="load-addatk">0</span></td>
+							<td class="load-stat-4">CRI Dmg</td>
+							<td class="load-stat-5"><span id="load-critdmg">0</span>%</td>
+						</tr>
+						<tr>
+							<td class="load-stat-1">DEF</td>
+							<td class="load-stat-2"><span id="load-basedef">0</span></td>
+							<td class="load-stat-3">+<span id="load-adddef">0</span></td>
+							<td class="load-stat-4">Resistance</td>
+							<td class="load-stat-5"><span id="load-resist">0</span>%</td>
+						</tr>
+						<tr>
+							<td class="load-stat-1">SPD</td>
+							<td class="load-stat-2"><span id="load-basespd">0</span></td>
+							<td class="load-stat-3">+<span id="load-addspd">0</span></td>
+							<td class="load-stat-4">Accuracy</td>
+							<td class="load-stat-5"><span id="load-accuracy">0</span>%</td>
+						</tr>
+					</tbody>
+				</table>
+				<table id="load-monster-skill-table">
+					<caption>Skill levels:</caption>
+					<tbody>
+						<tr>
+							<td>S1: <span id="load-skill-1-level">1</span></td>
+							<td>S2: <span id="load-skill-2-level">1</span></td>
+							<td>S3: <span id="load-skill-3-level">1</span></td>
+							<td>S4: <span id="load-skill-4-level">1</span></td>
+						</tr>
+					</tbody>
+				</table>
+				<table id="load-monster-glory-table">
+					<caption>Glory buildings:</caption>
+					<tbody>
+						<tr>
+							<td class="load-glory-1">Fire</td>
+							<td class="load-glory-2"><span id="load-glory-fire">0</span>%</td>
+							<td class="load-glory-3">HP</td>
+							<td class="load-glory-4"><span id="load-glory-hp">0</span>%</td>
+						</tr>
+						<tr>
+							<td class="load-glory-1">Water</td>
+							<td class="load-glory-2"><span id="load-glory-water">0</span>%</td>
+							<td class="load-glory-3">ATK</td>
+							<td class="load-glory-4"><span id="load-glory-attack">0</span>%</td>
+						</tr>
+						<tr>
+							<td class="load-glory-1">Wind</td>
+							<td class="load-glory-2"><span id="load-glory-wind">0</span>%</td>
+							<td class="load-glory-3">DEF</td>
+							<td class="load-glory-4"><span id="load-glory-defense">0</span>%</td>
+						</tr>
+						<tr>
+							<td class="load-glory-1">Light</td>
+							<td class="load-glory-2"><span id="load-glory-light">0</span>%</td>
+							<td class="load-glory-3">SPD</td>
+							<td class="load-glory-4"><span id="load-glory-speed">0</span>%</td>
+						</tr>
+						<tr>
+							<td class="load-glory-1">Dark</td>
+							<td class="load-glory-2"><span id="load-glory-dark">0</span>%</td>
+							<td class="load-glory-3">CRI DMG</td>
+							<td class="load-glory-4"><span id="load-glory-critdamage">0</span>%</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 		<div id="load-footer">
@@ -371,6 +467,7 @@
 </div>
 <div id="backdrop"></div>
 
+<script src="https://use.fontawesome.com/f220b420f1.js"></script>
 <script type="text/javascript" src="js/tabs.js"></script>
 <script type="text/javascript" src="js/data.js"></script>
 <script type="text/javascript" src="js/swsim.js"></script>
