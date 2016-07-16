@@ -1,6 +1,7 @@
 * {
 	box-sizing: border-box;
 	font-family: Roboto, "Helvetica Neue", Helvetica, Arial;
+	font-size: 16px;
 	text-decoration: none;
 	background-color: white;
 	color: #4C2882;
@@ -43,8 +44,11 @@ a {
 }
 
 .button:hover {
-	background-origin: padding-box;
 	background-color: #E6E6E6;
+}
+
+.button:active {
+	background-color: #B8B8B8;
 }
 
 #tabs-container {
@@ -207,11 +211,11 @@ td input {
 **/
 
 .monster-basic-stat-input {
-	width: 40px;
+	width: 50px;
 }
 
 .glory-input {
-	width: 40px;
+	width: 50px;
 }
 
 #runes-skill-level select {
@@ -325,8 +329,9 @@ td input {
 #load-body { 
 	display: block;
 	padding: 50px;
-	overflow: auto;
+	overflow: hidden;
 	border-radius: 5px;
+	border: 2px solid #4C2882;
 
 }
 
@@ -334,17 +339,22 @@ td input {
 	width: 50%;
 	height: 90%;
 	float: left;
-	border-right: 1px solid black;
+	overflow-y: auto;
+}
+
+.split-panel-section:nth-child(2) {
+	padding-left: 2.5%;
+	padding-right: 2.5%;
 }
 
 #load-body div ul {
 	position: relative;
 	display: block;
-	height: calc(100% - 100px);
+	height: calc(100% - 50px);
 	width: 75%;
 	padding: 0;
 	margin-top: 5px;
-	border: 2px solid #4C2882;
+	border: 3px solid #4C2882;
 	overflow-y: hidden;
 
 }
@@ -362,27 +372,23 @@ td input {
 
 }
 
-.save-data:hover {
-	
+.save-data:hover {	
 	background-color: #E6E6E6;
-
 }
 
 .save-data:active {
-	
 	background-color: #B8B8B8;
 }
-
 
 .save-data:last-child {
 	border-bottom: none;
 	padding-bottom: 0px;
 }
 
-#build-name {
+#load-build-name {
 	position: relative;
 	height: auto;
-	padding: 5px;
+	padding: 0px 0px 10px 0px;
 }
 
 #delete-button {
@@ -391,6 +397,127 @@ td input {
 	border-color: red;
 	right: 5px;
 	top: 10px;
+}
+
+#load-monster-top {
+	height: auto;
+	width: auto;
+	position: relative;
+}
+
+#load-monster-basic-info {
+	display: inline-block;
+	position: relative;
+	margin-top: 10px;
+	height: 60px;
+	width: 60px;
+	font-size: 20px;
+}
+
+#load-monster-portrait {
+	height: 60px;
+	width: 60px;
+}
+
+.portrait-star {
+	position: absolute;
+	height: 16px;
+	width: auto;
+	top: 1.8px;
+	background: transparent;
+}
+
+.portrait-star-1 {
+	left: 0px;
+}
+
+.portrait-star-2 {
+	left: 8px;
+}
+
+.portrait-star-3 {
+	left: 16px;
+}
+
+.portrait-star-4 {
+	left: 24px;
+}
+
+.portrait-star-5 {
+	left: 32px;
+}
+
+.portrait-star-6 {
+	left: 40px;
+}
+
+.portrait-level {
+	position: absolute;
+	bottom: -3px;
+	right: 5px;
+	font-size: 16px;
+	background: transparent;
+	color: white;
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+
+}
+#load-monster-name {
+	position: absolute;
+	margin-left: 20px;
+	display: inline-block;
+	top: 20px;
+	font-size: 18px;
+	height: auto;
+}
+
+#load-monster-bottom {
+	height: auto;
+}
+
+#load-monster-bottom p, #load-monster-bottom table {
+	margin-top: 10px;
+	margin-bottom: 0px;
+}
+
+#load-monster-bottom table {
+	border-spacing: 0;
+	border-radius: 5px;
+	border-collapse: collapse;
+} 
+
+#load-monster-bottom caption {
+	text-align: left;
+}
+
+#load-monster-bottom table tbody {
+	border: 2px solid #4C2882;
+	border-radius: 5px;
+	border-spacing: 0;
+	width: auto;
+}
+
+.load-stat-1 {
+
+}
+
+.load-stat-2 {
+	
+}
+
+.load-stat-3 {
+	color: green;
+}
+
+.load-stat-4 {
+	
+}
+
+.load-stat-5 {
+	
+}
+
+td span {
+	color: inherit;
 }
 
 #load-footer {

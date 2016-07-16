@@ -312,23 +312,6 @@ function clone (obj) {
     logger.log("Error in cloning." + obj);
 }
 
-function monster_change () {
-    "use strict";
-    var monster_name = document.getElementById("monster-selector").value;
-    var has_awakened = document.getElementById("monster-awakened-selector").value;
-    var img_src = "img/" + monster_name;
-    MONSTER_NAME = monster_name;
-
-    if (has_awakened === "yes") {
-        img_src += "-awakened";
-        MONSTER_NAME += "_awakened";
-    }
-    img_src += ".png";
-
-    document.getElementById("monster-portrait").src = img_src;
-
-}
-
 function change_debug_mode () {
     "use strict";
     var debug_mode = document.getElementById("debug-mode-checkbox").checked;
@@ -358,7 +341,6 @@ function change_debug_mode () {
 
 }
 document.getElementById("debug-mode-checkbox").addEventListener("click", change_debug_mode, false);
-document.getElementById("monster-selection").addEventListener("click", monster_change, false);
 
 function get_skill_cooldowns (monster_data) {
     "use strict";
@@ -1138,7 +1120,11 @@ function get_value (id) {
 
 function run_simulation() { //id, entry, level, star, hp, atk, def, spd, critrate, critdmg, 
     "use strict";
-    var farmer_id = monster_id[MONSTER_NAME];
+    var monster_name = get_value("monster-selector");
+    if (get_value("monster-awakened-selector") === "yes") {
+        monster_name += "_awakened";
+    }
+    var farmer_id = monster_id[monster_name];
     var monster_entry = SWData.mons[farmer_id];
     var monster_attribute_string = ["water", "fire", "wind", "light", "dark", "neutral"][monster_entry.attribute - 1];
 
