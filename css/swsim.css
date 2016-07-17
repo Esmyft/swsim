@@ -272,6 +272,7 @@ td input {
 	min-width: 100%;
 	margin-right: 100%;
 	font-size: 10px;
+	height: auto;
 }
 
 .debug-entry {
@@ -282,6 +283,7 @@ td input {
 	min-width: 100%;
 	margin-right: 100%;
 	font-size: 10px;
+	height: auto;
 }
 
 #map-container, #number-of-sim-container, #button-container {

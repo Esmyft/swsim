@@ -209,7 +209,7 @@ var monster_skills = { //instructions, damage%, harmful effect rate, cooldown, r
     
 };
 
-var scenario = {  //name, base_monster_id, attribute, hp, atk, def, spd, resist, class, unit_level
+var scenario = {  //name, base_monster_id, attribute, con, atk, def, spd, resist, class, unit_level
     "faimon-1-normal": [
         [
             4,
@@ -221,9 +221,9 @@ var scenario = {  //name, base_monster_id, attribute, hp, atk, def, spd, resist,
     ],
     "faimon-1-hard": [
         [[1, 1, 1, 1], [1, 1, 1, 1], [2, 2, 3, 2, 2]],
-        [["sieq", 10602, 2, 282 * 15, 460, 260, 119, 21, 3, 33], ["raoq", 11002, 2, 379 * 15, 415, 319, 117, 21, 3, 33]],
-        [["sieq", 10602, 2, 340 * 15, 554, 313, 119, 21, 4, 34], ["raoq", 11002, 2, 456 * 15, 501, 385, 117, 21, 4, 34]],
-        [["sieq_awakened", 10612, 2, 413 * 15, 816, 402, 132, 24, 4, 34]]
+        [["sieq", 10602, 2, 282, 460, 260, 119, 21, 3, 33], ["raoq", 11002, 2, 379, 415, 319, 117, 21, 3, 33]],
+        [["sieq", 10602, 2, 340, 554, 313, 119, 21, 4, 34], ["raoq", 11002, 2, 456, 501, 385, 117, 21, 4, 34]],
+        [["sieq_awakened", 10612, 2, 413, 816, 402, 132, 24, 4, 34]]
     ]
 };
 
@@ -304,7 +304,9 @@ function clone (obj) {
 
         var keys = Object.keys(obj);
         keys.forEach(function (el) {
-            copy[el] = clone(obj[el]);
+            if (el !== "target") {
+                copy[el] = clone(obj[el]);
+            }
         });
         return copy;
     }
@@ -563,7 +565,6 @@ function calculate_raw_damage (monster, target, multiplier_array, state, attack_
     "use strict";
     if (multiplier_array.length === 0) return 0;
     else if (typeof multiplier_array === "number") {
-        console.log("Damage is " + multiplier_array);
         return multiplier_array;
     }
 
@@ -687,10 +688,6 @@ function monster_take_damage(monster, damage) {
 
     logger.add_debug_log(monster.name + " takes " + damage_dealt + " damage!");
 
-    if (is_fatal_blow) {
-        logger.add_debug_log(monster.name + " died!");
-    }
-
     return {is_fatal_blow: is_fatal_blow, damage_dealt: damage_dealt};
 }
 
@@ -798,14 +795,13 @@ function monster_teamattack (monster, target, state, skill_id, interaction) {
     "use strict";
     var skill_index = get_skill_index(monster, skill_id);
     var skill_level = monster.skill_levels[skill_index];
-    var bonus_skillup_damage = monster_skills[skill_id][1][monster.skill_level - 1];
+    var bonus_skillup_damage = monster_skills[skill_id][1][skill_level - 1];
     var multiplier_array = JSON.parse(SWData.skills[skill_id]["Damage"]);
     var attack_type;
     var attack_type_percent_multiplier;
     var advantage = has_elemental_advantage(monster, target);
 
     var raw_damage = calculate_raw_damage(monster, target, multiplier_array, state);
-    console.log(raw_damage);
     var attribute_bonus_critrate = 15 * advantage;
 
     if (advantage === -1 && Math.random() < 0.45) {
@@ -830,14 +826,11 @@ function monster_teamattack (monster, target, state, skill_id, interaction) {
         attack_type = "normal";
         attack_type_percent_multiplier = 100;
     }
-    console.log(raw_damage, attack_type_percent_multiplier, bonus_skillup_damage);
     raw_damage = raw_damage * (attack_type_percent_multiplier + bonus_skillup_damage) / 100;
     var target_defense = target.def;
     var effective_damage = (1000 * raw_damage) / (3.5 * target_defense + 1140);
-    console.log(effective_damage);
     // giving randomness multiplier to effective damage: 0.9 to 1.1
     effective_damage = ((Math.random() * 0.2) + 0.9) * effective_damage;
-    console.log(effective_damage);
 
     var take_damage_result = monster_take_damage(target, effective_damage);
 
@@ -856,17 +849,16 @@ function monster_teamattack (monster, target, state, skill_id, interaction) {
     potential_attackers = potential_attackers.filter(has_not_died);
 
     var i = 0;
-    console.log(interaction[2]);
-    while (!potential_attackers || i < interaction[2]) {
+    while (potential_attackers.length > 0 && i < interaction[2]) {
         var choosen_monster_index = Math.floor(Math.random() * potential_attackers.length);
-        var choosen_monster_skill_id = potential_attackers[choosen_monster_index].skill_list[0];
-        monster_use_skill(potential_attackers[choosen_monster_index], state, choosen_monster_skill_id, target);
+        var choosen_monster = potential_attackers[choosen_monster_index];
+        console.log(potential_attackers);
+        console.log(choosen_monster_index);
+        var choosen_monster_skill_id = choosen_monster.skill_list[0];
+        monster_use_skill(choosen_monster, state, choosen_monster_skill_id, target);
         potential_attackers.splice(choosen_monster_index, 1);
         i += 1;
     }
-
-
-
     return damage_object;
 }
 
@@ -885,14 +877,12 @@ function monster_attack (monster, target, state, skill_id, interaction) {
     }
     var skill_level = monster.skill_levels[skill_index];
     var bonus_skillup_damage = monster_skills[skill_id][1][skill_level - 1];
-    temp = monster_skills[skill_id];
     var multiplier_array = JSON.parse(SWData.skills[skill_id]["Damage"]);
     var attack_type;
     var attack_type_percent_multiplier;
     var advantage = has_elemental_advantage(monster, target); // -1, 0 or 1
 
     var raw_damage = calculate_raw_damage(monster, target, multiplier_array, state); // doesnt count skillups
-    console.log(raw_damage);
     var attribute_bonus_critrate = 15 * advantage;
 
     if (advantage === -1 && Math.random() < 0.45) {
@@ -919,13 +909,10 @@ function monster_attack (monster, target, state, skill_id, interaction) {
     }
 
     raw_damage = raw_damage * (attack_type_percent_multiplier + bonus_skillup_damage) / 100;
-    console.log(raw_damage);
     var target_defense = target.def;
     var effective_damage = (1000 * raw_damage) / (3.5 * target_defense + 1140);
-    console.log(effective_damage);
     // giving randomness multiplier to effective damage: 0.9 to 1.1
     effective_damage = ((Math.random() * 0.2) + 0.9) * effective_damage;
-    console.log(effective_damage);
 
     var take_damage_result = monster_take_damage(target, effective_damage);
 
@@ -949,7 +936,7 @@ function monster_use_skill (monster, state, skill_id, optional_target) {
 
     var interaction_number;
     var i;
-    var attack_result = [];
+    var attack_results = [];
     var target;
     for (interaction_number = 0; interaction_number < skill_data.length; interaction_number += 1) {
         var interaction = skill_data[interaction_number];
@@ -961,19 +948,27 @@ function monster_use_skill (monster, state, skill_id, optional_target) {
                 target = optional_target || monster.target;
                 logger.add_debug_log(monster.name + " uses " + SWData.skills[skill_id]["description_en"] + " on " + target.name);
 
-                attack_result[attack_result.length] = monster_attack(monster, target, state, skill_id, interaction);
+                var attack_result = monster_attack(monster, target, state, skill_id, interaction);
+                attack_results[attack_results.length] = attack_result;
+
+                if (attack_result.is_fatal_blow) {
+                    logger.add_debug_log(attack_result.defender.name + " has died!");
+                }
                 monster_apply_effect(monster, target, state, skill_id, interaction, attack_result); 
+
+
 
             }
             else if (interaction[1] === "AOE") {
+                logger.add_debug_log(monster.name + " uses " + SWData.skills[skill_id]["description_en"] + " on opponent team!");
                 for (i = 0; i < state[monster.opposing_side].monsters.length; i += 1) {
-                    if (state[monster.opposing_side].monsters[i].is_dead === true) continue;
+                    if (state[monster.opposing_side].monsters[i].is_dead) continue;
 
                     target = state[monster.opposing_side].monsters[i];
-                    logger.add_debug_log(monster.name + " uses " + SWData.skills[skill_id]["description_en"] + " on " + target.name);
 
-                    attack_result[attack_result.length] = monster_attack(monster, target, state, skill_id, interaction);
-                    monster_apply_effect(monster, state, skill_id, interaction, attack_result); 
+                    var attack_result = monster_attack(monster, target, state, skill_id, interaction);
+                    attack_results[attack_results.length] = attack_result;
+                    monster_apply_effect(monster, target, state, skill_id, interaction, attack_result); 
 
                 } 
             }
@@ -994,9 +989,8 @@ function monster_use_skill (monster, state, skill_id, optional_target) {
         else if (interaction[0] === "TEAMATTACK") {
             if (interaction[1] === "SINGLE") {
                 target = optional_target || monster.target;
+                logger.add_debug_log(monster.name + " uses " + SWData.skills[skill_id]["description_en"] + " on " + target.name);
                 monster_teamattack(monster, target, state, skill_id, interaction);
-
-                if (target.currhp <= 0) target.is_dead = true;
             }
         }
     }
@@ -1028,8 +1022,6 @@ function monster_take_turn (monster, state) {
         }
     }
 
-    console.log(available_skills);
-    console.log(monster.name);
     // choose skill - random as of now
     var selected_skill_index = Math.floor(Math.random() * available_skills.length);
     var selected_skill_id = available_skills[selected_skill_index];

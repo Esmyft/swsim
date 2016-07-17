@@ -324,10 +324,18 @@ function load_build () {
 
 function delete_build () {
 	var build_index = get_toggled_save_index();
+	var previous_list_sibling = document.getElementsByClassName("save-data")[build_index - 1];
+
+	previous_list_sibling.dispatchEvent(new Event("click"));
+
 	document.getElementsByClassName("save-data")[build_index].remove();
 	var builds = JSON.parse(localStorage.builds);
 	builds.splice(build_index - 1, 1);
 	localStorage.builds = JSON.stringify(builds);
+
+
+
+
 }
 
 function monster_change () {
