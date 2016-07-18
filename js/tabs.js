@@ -87,7 +87,7 @@ function save_build () {
 		var save_data_child = document.createElement("li");
 		save_data_child.setAttribute("class", "save-data");
 		save_data_child.setAttribute("tabindex", "0");
-		save_data_child.innerText = build.name;
+		save_data_child.innerHTML = build.name;
 		save_data_child.addEventListener("click", select_build);
 		save_data_list.appendChild(save_data_child);
 		}
@@ -97,7 +97,7 @@ function save_build () {
 		builds[save_data_index - 1].name = document.getElementById("build-name").value;
 		localStorage.builds = JSON.stringify(builds);
 
-		document.getElementsByClassName("save-data")[save_data_index].innerText = document.getElementById("build-name").value;
+		document.getElementsByClassName("save-data")[save_data_index].innerHTML = document.getElementById("build-name").value;
 	}
 }
 
@@ -235,34 +235,34 @@ function select_build () {
 	else {
 		sets_string = sets_string.slice(0, -2); //remove comma and space in front
 	}
-	document.getElementById("load-set-effects").innerText = sets_string;
+	document.getElementById("load-set-effects").innerHTML = sets_string;
 
-	document.getElementById("load-basehp").innerText = build.basehp;
-	document.getElementById("load-addhp").innerText = build.addhp;
-	document.getElementById("load-critrate").innerText = build.critrate;
-	document.getElementById("load-baseatk").innerText = build.baseatk;
-	document.getElementById("load-addatk").innerText = build.addatk;
-	document.getElementById("load-critdmg").innerText = build.critdmg;
-	document.getElementById("load-basedef").innerText = build.basedef;
-	document.getElementById("load-adddef").innerText = build.adddef;
-	document.getElementById("load-resist").innerText = build.resist;
-	document.getElementById("load-basespd").innerText = build.basespd;
-	document.getElementById("load-addspd").innerText = build.addspd;
-	document.getElementById("load-accuracy").innerText = build.accuracy;
-	document.getElementById("load-skill-1-level").innerText = build.skill_1_level;
-	document.getElementById("load-skill-2-level").innerText = build.skill_2_level;
-	document.getElementById("load-skill-3-level").innerText = build.skill_3_level;
-	document.getElementById("load-skill-4-level").innerText = build.skill_4_level;
-	document.getElementById("load-glory-fire").innerText = build.glory_fire;
-	document.getElementById("load-glory-hp").innerText = build.glory_hp;
-	document.getElementById("load-glory-water").innerText = build.glory_water;
-	document.getElementById("load-glory-attack").innerText = build.glory_attack;
-	document.getElementById("load-glory-wind").innerText = build.glory_wind;
-	document.getElementById("load-glory-defense").innerText = build.glory_defense;
-	document.getElementById("load-glory-light").innerText = build.glory_light;
-	document.getElementById("load-glory-speed").innerText = build.glory_speed;
-	document.getElementById("load-glory-dark").innerText = build.glory_dark;
-	document.getElementById("load-glory-critdamage").innerText = build.glory_critdamage;
+	document.getElementById("load-basehp").innerHTML = build.basehp;
+	document.getElementById("load-addhp").innerHTML = build.addhp;
+	document.getElementById("load-critrate").innerHTML = build.critrate;
+	document.getElementById("load-baseatk").innerHTML = build.baseatk;
+	document.getElementById("load-addatk").innerHTML = build.addatk;
+	document.getElementById("load-critdmg").innerHTML = build.critdmg;
+	document.getElementById("load-basedef").innerHTML = build.basedef;
+	document.getElementById("load-adddef").innerHTML = build.adddef;
+	document.getElementById("load-resist").innerHTML = build.resist;
+	document.getElementById("load-basespd").innerHTML = build.basespd;
+	document.getElementById("load-addspd").innerHTML = build.addspd;
+	document.getElementById("load-accuracy").innerHTML = build.accuracy;
+	document.getElementById("load-skill-1-level").innerHTML = build.skill_1_level;
+	document.getElementById("load-skill-2-level").innerHTML = build.skill_2_level;
+	document.getElementById("load-skill-3-level").innerHTML = build.skill_3_level;
+	document.getElementById("load-skill-4-level").innerHTML = build.skill_4_level;
+	document.getElementById("load-glory-fire").innerHTML = build.glory_fire;
+	document.getElementById("load-glory-hp").innerHTML = build.glory_hp;
+	document.getElementById("load-glory-water").innerHTML = build.glory_water;
+	document.getElementById("load-glory-attack").innerHTML = build.glory_attack;
+	document.getElementById("load-glory-wind").innerHTML = build.glory_wind;
+	document.getElementById("load-glory-defense").innerHTML = build.glory_defense;
+	document.getElementById("load-glory-light").innerHTML = build.glory_light;
+	document.getElementById("load-glory-speed").innerHTML = build.glory_speed;
+	document.getElementById("load-glory-dark").innerHTML = build.glory_dark;
+	document.getElementById("load-glory-critdamage").innerHTML = build.glory_critdamage;
 }
 
 function reset_load_display () {
@@ -332,10 +332,6 @@ function delete_build () {
 	var builds = JSON.parse(localStorage.builds);
 	builds.splice(build_index - 1, 1);
 	localStorage.builds = JSON.stringify(builds);
-
-
-
-
 }
 
 function monster_change () {
@@ -350,7 +346,25 @@ function monster_change () {
     img_src += ".png";
 
     document.getElementById("main-monster-portrait").src = img_src;
+}
 
+function select_tab () {
+	var tabs = document.getElementsByClassName("tab");
+	var i;
+	var tab_content;
+	for (i = 0; i < tabs.length; i++) {
+		if (tabs[i] === this) {
+			this.classList.add("current-tab");
+			tab_content = this.getAttribute("data-content-tab");
+			document.getElementById(tab_content).classList.add("current-tab-content");
+		}
+
+		else {
+			tabs[i].classList.remove("current-tab");
+			tab_content = tabs[i].getAttribute("data-content-tab");
+			document.getElementById(tab_content).classList.remove("current-tab-content");
+		}
+	}
 }
 
 document.addEventListener("DOMContentLoaded", populate_build_list);
@@ -366,3 +380,7 @@ for (var i = 0; i < builds_array.length; i++) {
 	builds_array[i].addEventListener("click", select_build);
 }
 document.getElementById("monster-selection").addEventListener("click", monster_change, false);
+var tabs = document.getElementsByClassName("tab");
+for (i = 0; i < tabs.length;i++) {
+	tabs[i].addEventListener("click", select_tab);
+}

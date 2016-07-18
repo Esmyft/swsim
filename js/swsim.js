@@ -1,24 +1,24 @@
 /*jslint browser:true */
 
 // function to allow comparison between Arrays
-Array.prototype.equals = function (array) {
+function array_equals(array1, array2) {
     // if the other array is a falsy value, return
-    if (!array)
+    if (typeof array1 !== "array" || typeof array2 !== "array")
         return false;
 
     // compare lengths - can save a lot of time 
-    if (this.length != array.length)
+    if (array1.length !== array2.length)
         return false;
 
     var i;
-    for (i = 0, l = this.length; i < l; i++) {
+    for (i = 0; i < array1.length; i++) {
         // Check if we have nested arrays
-        if (this[i] instanceof Array && array[i] instanceof Array) {
+        if (array1[i] instanceof Array && array1[i] instanceof Array) {
             // recurse into the nested arrays
-            if (!this[i].equals(array[i]))
-                return false;       
+            if (!array_equals(array1[i], array2[i]))
+                return false;
         }           
-        else if (this[i] != array[i]) { 
+        else if (array1[i] != array2[i]) { 
             // Warning - two different object instances will never be equal: {x:20} != {x:20}
             return false;   
         }           
@@ -26,8 +26,15 @@ Array.prototype.equals = function (array) {
     return true;
 }
 
-Object.defineProperty(Array.prototype, "equals", {enumerable: false});
-
+function array_has(array, el) {
+    var i;
+    for (i = 0; i < array.length; i++) {
+        if (array[i] === el || array_equals(array[i], el)) {
+            return true;
+        }
+    }
+    return false;
+}
 
 // ------
 var MONSTER_NAME = "soha_awakened";
@@ -211,19 +218,24 @@ var monster_skills = { //instructions, damage%, harmful effect rate, cooldown, r
 
 var scenario = {  //name, base_monster_id, attribute, con, atk, def, spd, resist, class, unit_level
     "faimon-1-normal": [
-        [
-            4,
-            ["Fire Hellhound"],
-            ["Fire Inugami"]
-        ],
-        [],
-        []
+        [[1, 1, 1, 1], [1, 1, 1, 1], [2, 2, 3, 2, 2]],
+        [["sieq", 10602, 2, 175, 285, 160, 109, 18, 2, 27], ["raoq", 11002, 2, 235, 258, 198, 107, 18, 2, 27]],
+        [["sieq", 10602, 2, 213, 349, 196, 109, 18, 3, 28], ["raoq", 11002, 2, 288, 315, 242, 107, 18, 3, 28]],
+        [["sieq_awakened", 10612, 2, 267, 528, 261, 121, 21, 3, 28]]
     ],
+
     "faimon-1-hard": [
         [[1, 1, 1, 1], [1, 1, 1, 1], [2, 2, 3, 2, 2]],
         [["sieq", 10602, 2, 282, 460, 260, 119, 21, 3, 33], ["raoq", 11002, 2, 379, 415, 319, 117, 21, 3, 33]],
         [["sieq", 10602, 2, 340, 554, 313, 119, 21, 4, 34], ["raoq", 11002, 2, 456, 501, 385, 117, 21, 4, 34]],
         [["sieq_awakened", 10612, 2, 413, 816, 402, 132, 24, 4, 34]]
+    ],
+
+    "faimon-1-hard":[
+        [[1, 1, 1, 1], [1, 1, 1, 1], [2, 2, 3, 2, 2]],
+        [["sieq", 10602, 2, 433, 707, 400, 130, 24, 4, 40], ["raoq", 11002, 2, 582, 640, 491, 128, 24, 4, 40]],
+        [["sieq", 10602, 2, 531, 865, 488, 130, 24, 5, 40], ["raoq", 11002, 2, 712, 782, 600, 128, 24, 5, 40]],
+        [["sieq_awakened", 10612, 2, 792, 1563, 771, 143, 27, 6, 40]]
     ]
 };
 
@@ -340,7 +352,6 @@ function change_debug_mode () {
             rules[i].style.display = log_hidden;
         }
     }
-
 }
 document.getElementById("debug-mode-checkbox").addEventListener("click", change_debug_mode, false);
 
@@ -353,50 +364,59 @@ function get_skill_cooldowns (monster_data) {
 
     for (i = 0; i < skill_list.length; i += 1) {
         var skill_level = 1;
-        var skill_id = skill_list[i];
-        //console.log(monster_skills);    
+        var skill_id = skill_list[i];   
         skill_cooldowns[skill_cooldowns.length] = monster_skills[skill_id][3][skill_level - 1];
     }
 
     return skill_cooldowns;
-
 }
-// !!! TODO !!!
-function apply_leader_skill (monster) { // example: lapis: [17001, 0, 0, 2, 0.25] verde: [13003, 2, 0, 4, 0.28]
-    var id = monster.id;
-    var leader_skill_string = JSON.parse(SWData.mons[id]["leader skill"]);
+
+function apply_leader_skill (leader, monster) { // example: lapis: [17001, 0, 0, 2, 0.25] verde: [13003, 2, 0, 4, 0.28]
+    var id = leader.id;
+    var leader_skill = JSON.parse(SWData.mons[id]["leader skill"]);
+    var leader_skill_limitation = leader_skill[1];
+    var leader_skill_attribute = leader_skill[2];
+    var leader_skill_type_index = leader_skill[3];
 
     // check that leader skill either applies everywhere (0) or in scenario only (2)
-    if (leader_skill_string[1] !== 0 && leader_skill_string[1] !== 2) return;
+    if (leader_skill_limitation !== 0 && leader_skill_limitation !== 2) return;
 
     // check that leader skill either applies to every attribute or to monster's attribute
-    if (leader_skill_string[2] !== 0 && leader_skill_string[2] !== monster.attribute) return;
+    if (leader_skill_attribute !== 0 && leader_skill_attribute !== monster.attribute) return;
 
-    var base_stat = ["", "base_hp", "base_atk", "base_def", "base_spd", "critrate", "critdmg", "res", "acc"];
+    var base_stat = ["", "base_hp", "base_atk", "base_def", "base_spd", "critrate", "critdmg", "res", "acc"][leader_skill_type_index];
+    var final_stat = ["", "maxhp", "atk", "def", "spd", "critrate", "critdmg", "res", "acc"][leader_skill_type_index];
+    var leader_skill_value = leader_skill[4];
+
+    if (leader_skill_type_index <= 4) {
+        monster[final_stat] += monster[base_stat] * leader_skill_value;
+    }
+
+    else {
+        monster[final_stat] = Math.min(100, monster[final_stat] + 100 * leader_skill_value);
+    }
 }
 
-// !!! TODO !!!
-function monster_passive_filter (skill_array, return_skill) {
+function monster_passive_filter (skill_array) {
     "use strict";
     var passive_list = [2012];
-    var new_skill_array = [];
+    var separated = [[],[]];
+    var skills = separated[0];
+    var passives = separated[1];
+
     var i;
     for (i = 0; i < skill_array.length; i += 1) {
-        var j;
-        var is_passive = false;
-        for (j = 0; j < passive_list.length; j += 1) {
-            if (skill_array[i] === passive_list[j]) {
-                is_passive = true;
-                break;
-            }
-
-            if (is_passive !== return_skill) {
-                new_skill_array[new_skill_array.length] = skill_array[i];
-            }
+        
+        if (array_has(passive_list, skill_array[i])) {
+            passives[passives.length] = skill_array[i];
         }
 
+        else {
+            skills[skills.length] = skill_array[i];
+        }
     }
-    return new_skill_array;
+
+    return separated;
 }
 
 function create_scenario_monster (monster_data, position) {
@@ -405,6 +425,7 @@ function create_scenario_monster (monster_data, position) {
     "use strict";
     var id = monster_id[monster_data[0]];
     var entry = SWData.mons[id];
+    var separated_skill_passive = monster_passive_filter(JSON.parse(entry["base skill"]));
     var monster = {
         name: monster_data[0],
         id: monster_data[1],
@@ -423,18 +444,19 @@ function create_scenario_monster (monster_data, position) {
 
         star: monster_data[8],
         lvl: monster_data[9],
-        skill_list: monster_passive_filter(JSON.parse(entry["base skill"]), true),
-        skill_levels: [1, 1, 1],
+        skill_list: separated_skill_passive[0],
+        skill_levels: [1, 1, 1, 1],
         skill_cooldowns: get_skill_cooldowns(monster_data), 
 
         is_dead: false,
-        passives: monster_passive_filter(JSON.parse(entry["base skill"]), false),
-        buffs: [],
+        passives: separated_skill_passive[1],
+        status: {},
         atb: 0,
 
         side: "scenario_side",
         opposing_side: "farmer_side",
         position: position,
+        posname: monster_data[0] + "(" + position + ")"
     };
 
     return monster;
@@ -462,12 +484,11 @@ function create_scenario (scenario) {
             var grouping = waves[wave][position];
             var num_of_monsters = scenario[grouping].length;
             var chosen_monster_data = scenario[grouping][Math.floor(Math.random() * num_of_monsters)];
-            monsters_remaining[wave - 1][position] = create_scenario_monster(chosen_monster_data);
+            monsters_remaining[wave - 1][position] = create_scenario_monster(chosen_monster_data, position);
         }
 
     }
-
-    return {monsters: monsters, monsters_remaining: monsters_remaining, team_passives: []};
+    return {monsters: monsters, monsters_remaining: monsters_remaining, passives: []};
 } 
 
 function State (farmer, scenario) {
@@ -477,12 +498,12 @@ function State (farmer, scenario) {
     this.farmerInstance.currhp = this.farmerInstance.maxhp;
     this.farmerInstance.is_dead = false;
     this.farmerInstance.passives = [];
-    this.farmerInstance.buffs = [];
+    this.farmerInstance.status = {};
     this.farmerInstance.atb = 0;
     this.farmerInstance.skill_cooldowns = [];
     this.farmerInstance.target = null;
 
-    apply_leader_skill(this.farmerInstance);
+    apply_leader_skill(this.farmerInstance, this.farmerInstance);
     var i;
     for (i = 0; i < this.farmerInstance.skill_list.length; i += 1) {
         var skill_number = this.farmerInstance.skill_list[i].toString();
@@ -491,11 +512,16 @@ function State (farmer, scenario) {
 
     this.farmer_side = {monsters: [this.farmerInstance], team_passives: []}; //team_passives is for passive skills and effects such as defend
     this.scenario_side = create_scenario(scenario); //{monsters, monsters_remaining, team_passives}
-
+    this.wave = 1;
 }
+
 function has_died (monster) {
     "use strict";
-    monster.is_dead = monster.currhp <= 0;
+    if (monster.currhp <= 0) {
+        monster.is_dead = true;
+        monster.currhp = 0;
+    }
+
     return monster.is_dead;
 }
 
@@ -542,6 +568,8 @@ function get_skill_index (monster, skill_id) {
 function get_next_monster (state) {
     "use strict";
     var monster_list = state.farmer_side.monsters.concat(state.scenario_side.monsters);
+    monster_list = monster_list.filter(has_not_died);
+
     var highest_atb = 0;    
     var highest_atb_monster;
     var i;
@@ -563,14 +591,10 @@ function get_next_monster (state) {
 //input: array, output: number
 function calculate_raw_damage (monster, target, multiplier_array, state, attack_result) {
     "use strict";
-    if (multiplier_array.length === 0) return 0;
-    else if (typeof multiplier_array === "number") {
+    if (typeof multiplier_array === "number") {
         return multiplier_array;
     }
 
-    else if (multiplier_array[1] === "FIXED") multiplier_array.splice(1, 1);
-    
-    if (multiplier_array.length === 1) return calculate_raw_damage(monster, target, multiplier_array[0], state);
     else if (typeof multiplier_array === "string") {
         if (multiplier_array === "ATK") return monster.atk;
         else if (multiplier_array === "DEF") return monster.def;
@@ -583,11 +607,19 @@ function calculate_raw_damage (monster, target, multiplier_array, state, attack_
         else if (multiplier_array === "TARGET_CUR_HP_RATE") return target.currhp / target.maxhp;
         else if (multiplier_array === "ATTACK_LOSS_HP") return monster.maxhp - monster.currhp;
         else if (multiplier_array === "ATTACK_LV") return monster.lvl;
-        else if (multiplier_array === "ATTACK_WIZARD_LIFE_RATE") return state[monster.side][monsters].filter(has_not_died).length / state[monster.side][monsters];
+        else if (multiplier_array === "ATTACK_WIZARD_LIFE_RATE") return state[monster.side][monsters].filter(has_not_died).length / state[monster.side][monsters].length;
         else if (multiplier_array === "DAMAGE_DEALT") return attack_result["damage_dealt"];
+        
+        else if (parseFloat(multiplier_array) !== NaN) return parseFloat(multiplier_array);
         //else if (multiplier_array === "DIE_RATE")
         //else if (multiplier_array === "LIFE_SHARE_ALL")
     }
+
+    if (multiplier_array.length === 0) return 0;
+
+    else if (multiplier_array[1] === "FIXED") multiplier_array.splice(1, 1);
+    
+    if (multiplier_array.length === 1) return calculate_raw_damage(monster, target, multiplier_array[0], state);
 
     var operand1 = calculate_raw_damage(monster, target, multiplier_array[0], state);
     var operand2 = calculate_raw_damage(monster, target, multiplier_array[2], state);
@@ -610,18 +642,19 @@ function calculate_raw_damage (monster, target, multiplier_array, state, attack_
     }
 
     return calculate_raw_damage(monster, target, multiplier_array, state);
-
 }
 
 function get_next_wave (state) {
     "use strict";
+    logger.add_debug_log("Wave " + state.wave + " end");
     state.scenario_side.monsters = state.scenario_side.monsters_remaining.splice(0, 1)[0];
     var i;
-    for (i = 0; i < state.farmer_side.length; i += 1) {
-        var monster = state.farmer_side[i];
+    for (i = 0; i < state.farmer_side.monsters.length; i += 1) {
+        var monster = state.farmer_side.monsters[i];
         // reset buffs, attack bar
-        var heal_amount = calculate_raw_damage(null, state.farmer_side[i], [["TARGET_TOT_HP", "*", "0.20"]])
-        monster_reset_buffs(state.farmer_side[i], 2); 
+        var heal_amount = calculate_raw_damage(null, monster, [["TARGET_TOT_HP", "*", 0.20]], state);
+        monster_regain_hp(monster, heal_amount, "stage clear");
+        monster_reset_buffs(monster, 2); 
         monster.atb = 0;
 
         // reduce cooldowns
@@ -630,6 +663,8 @@ function get_next_wave (state) {
             monster.skill_cooldowns[j] = Math.max(0, monster.skill_cooldowns[j] - 1)
         }
     }
+    state.wave += 1;
+    logger.add_debug_log("Wave " + state.wave);
 }
 
 function has_elemental_advantage (monster, target) {
@@ -647,9 +682,9 @@ function has_elemental_advantage (monster, target) {
     return 0;
 }
 
-function monster_take_damage(monster, damage) {
+function monster_take_damage (monster, damage) {
     "use strict";
-    var shield = get_buff(monster, "SHIELD");
+    var shield = monster.status.shield ? monster.status.shield[1] : 0;
     var i;
 
     if (!!shield) {
@@ -686,9 +721,18 @@ function monster_take_damage(monster, damage) {
         damage_dealt = damage;
     }
 
-    logger.add_debug_log(monster.name + " takes " + damage_dealt + " damage!");
+    logger.add_debug_log(monster.posname + " takes " + Math.round(damage_dealt) + " damage!");
 
     return {is_fatal_blow: is_fatal_blow, damage_dealt: damage_dealt};
+}
+
+function monster_regain_hp (monster, heal_amount, effect_name) {
+    "use strict";
+    var oldhp = monster.currhp;
+    monster.currhp = Math.min(monster.currhp + heal_amount, monster.maxhp);
+    var actual_heal_amount = monster.currhp - oldhp;
+    logger.add_debug_log(monster.posname + " heals for " + Math.round(actual_heal_amount) + " due to " + effect_name);
+
 }
 
 // remember: single target
@@ -713,17 +757,19 @@ function monster_apply_effect (monster, target, state, skill_id, interaction, at
             if (Math.random() < application_failure_chance) continue;
 
             // application
-            var effect = effect_interaction[2];
+            var effect = effect_interaction[2].toLowerCase();
             var effect_duration = effect_interaction[4];
+            var effect_magnitude = effect_interaction[5];
 
-            var i = get_buff_index(target, effect);
-
-            if (i === null) {
-                target.buffs[target.buffs.length] = [effect, effect_duration];
+            if (effect === "continuousdmg") {
+                var dot_list = target.status[effect];
+                dot_list[dot_list.length] = [effect_duration, monster, effect_magnitude];
             }
 
             else {
-                target.buffs[i] = [effect, effect_duration];
+                if (target.status[effect][0] > effect_duration) continue;
+
+                target.status[effect] = [effect_duration, monster, effect_magnitude];
             }
         }
 
@@ -758,38 +804,25 @@ function monster_reset_buffs (monster, buff_type) {
     // 1 - debuffs only
     // 2 - both buffs and debuffs
     "use strict";
-    var buff_list = ["COUNTER", "DEFEND", "ENDURE", "IMMUNITY", "INCREASEATK", "INCREASECRITRATE", "INCREASECRITRES", "INCREASEDEF", "INCREASESPD", "INVINCIBLE", "PROTECTSOUL", "RECOVERY", "REFLECTDMG", "REVENGE", "SHIELD"];
-    var debuff_list = ["BLOCKEFFECT", "BOMB", "BRAND", "CONTINUOUSDMG", "DECREASEATK", "DECREASEDEF", "DECREASESPD", "DISTURBRECOVERY", "FREEZE", "GLANCING HIT", "OBLIVIOUS", "PROVOKE", "SILENCE", "SLEEP", "STUN"];
+    var buff_list = ["counter", "defend", "endure", "immunity", "increaseatk", "increasecritrate", "increasecritres", "increasedef", "increasespd", "invincible", "protectsoul", "recovery", "reflectdmg", "revenge", "shield"];
+    var debuff_list = ["blockeffect", "bomb", "brand", "continuousdmg", "decreaseatk", "decreasedef", "decreasespd", "disturbrecovery", "freeze", "glancinghit", "oblivious", "provoke", "silence", "sleep", "stun"];
+    var status = monster.status;
     var i;
-    for (i = monster.buffs.length; i >= 0; i -= 1) {
-        var buff_cat;
-        var j;
 
-        for (j = 0; j < buff_list.length; j += 1) {
-            if (buff_list[j] === monster.buffs[i][0]) {
-                buff_cat = 0;
-                break;
-            }
+    if (buff_type === 0 || buff_type === 2) {
+        for (i = 0; i < buff_list.length; i += 1) {
+            var buff_name = buff_list[i];
+            status[buff_name] = null;
         }
+    }
 
-        if (buff_cat === 0 && (buff_type === 0 || buff_type === 2)) {
-            monster.buffs.splice(i, 1);
-            continue;
+    if (buff_type === 1 || buff_type === 2) {
+        for (i = 0; i < debuff_list.length; i += 1) {
+            var debuff_name = debuff_list[i];
+            status[debuff_name] = null;
         }
-
-        for (j = 0; j < debuff_list.length; j += 1) {
-            if (debuff_list[j] === monster.buffs[i][0]) {
-                buff_cat = 1;
-                break;
-            }
-        }
-
-        if (buff_cat === 1 && (buff_type === 1 || buff_type === 2)) {
-            monster.buffs.splice(i, 1);
-            continue;
-        }
-    }    
-}   
+    }
+}
 
 function monster_teamattack (monster, target, state, skill_id, interaction) {
     "use strict";
@@ -852,8 +885,6 @@ function monster_teamattack (monster, target, state, skill_id, interaction) {
     while (potential_attackers.length > 0 && i < interaction[2]) {
         var choosen_monster_index = Math.floor(Math.random() * potential_attackers.length);
         var choosen_monster = potential_attackers[choosen_monster_index];
-        console.log(potential_attackers);
-        console.log(choosen_monster_index);
         var choosen_monster_skill_id = choosen_monster.skill_list[0];
         monster_use_skill(choosen_monster, state, choosen_monster_skill_id, target);
         potential_attackers.splice(choosen_monster_index, 1);
@@ -928,6 +959,10 @@ function monster_attack (monster, target, state, skill_id, interaction) {
     return damage_object;
 }
 
+function monster_heal (monster, target, state, skill_id, interaction) {
+
+}
+
 function monster_use_skill (monster, state, skill_id, optional_target) { 
     "use strict";
     // skill should be off cooldown
@@ -946,21 +981,16 @@ function monster_use_skill (monster, state, skill_id, optional_target) {
         if (interaction[0] === "ATTACK") {
             if (interaction[1] === "SINGLE") {
                 target = optional_target || monster.target;
-                logger.add_debug_log(monster.name + " uses " + SWData.skills[skill_id]["description_en"] + " on " + target.name);
+                logger.add_debug_log(monster.posname + " uses " + SWData.skills[skill_id]["description_en"] + " on " + target.name + "(" + target.position + ")");
 
                 var attack_result = monster_attack(monster, target, state, skill_id, interaction);
                 attack_results[attack_results.length] = attack_result;
 
-                if (attack_result.is_fatal_blow) {
-                    logger.add_debug_log(attack_result.defender.name + " has died!");
-                }
                 monster_apply_effect(monster, target, state, skill_id, interaction, attack_result); 
-
-
 
             }
             else if (interaction[1] === "AOE") {
-                logger.add_debug_log(monster.name + " uses " + SWData.skills[skill_id]["description_en"] + " on opponent team!");
+                logger.add_debug_log(monster.posname + " uses " + SWData.skills[skill_id]["description_en"] + " on opponent team!");
                 for (i = 0; i < state[monster.opposing_side].monsters.length; i += 1) {
                     if (state[monster.opposing_side].monsters[i].is_dead) continue;
 
@@ -980,7 +1010,7 @@ function monster_use_skill (monster, state, skill_id, optional_target) {
                 for (i = 0; i < state[side].monsters.length; i += 1) {
                     if (state[side].monsters[i].is_dead === true) continue;
 
-                    logger.add_debug_log(monster.name + " casts " + SWData.skills[skill_id]["description_en"] + " on all allies!");
+                    logger.add_debug_log(monster.posname + " casts " + SWData.skills[skill_id]["description_en"] + " on all allies!");
                     monster_buff(monster, state[side].monsters[i], skill_id, interaction);
                 }
             }
@@ -989,11 +1019,23 @@ function monster_use_skill (monster, state, skill_id, optional_target) {
         else if (interaction[0] === "TEAMATTACK") {
             if (interaction[1] === "SINGLE") {
                 target = optional_target || monster.target;
-                logger.add_debug_log(monster.name + " uses " + SWData.skills[skill_id]["description_en"] + " on " + target.name);
+                logger.add_debug_log(monster.posname + " uses " + SWData.skills[skill_id]["description_en"] + " on " + target.posname);
                 monster_teamattack(monster, target, state, skill_id, interaction);
             }
         }
     }
+
+    var monsters_just_died = [];
+    for (i = 0; i < attack_results.length; i += 1) {
+        attack_result = attack_results[i];
+        if (array_has(monsters_just_died, attack_result.defender)) continue;
+
+        if (attack_result.is_fatal_blow) {
+            monsters_just_died[monsters_just_died.length] = attack_result.defender;
+            logger.add_debug_log(attack_result.defender.posname + " has died!");
+        }
+    }
+     
 }
 
 function monster_take_turn (monster, state) {
@@ -1013,6 +1055,9 @@ function monster_take_turn (monster, state) {
         var targets = opposing_side.monsters.filter(has_not_died);
         monster.target = targets[Math.floor(Math.random() * targets.length)];
     }
+
+    // deal with monster atb
+    monster.atb = 0;
 
     // get available skills to choose from
     var available_skills = [];
@@ -1038,15 +1083,13 @@ function monster_take_turn (monster, state) {
         }
     }
 
-    // deal with monster atb
-    monster.atb = 0;
-
     // buffs and debuffs to be added
 }
 
 function run_state (state) {
     "use strict";
     var winlose; 
+    logger.add_debug_log("Wave 1");
     //win -> winlose = 1, 
     //lose -> winlose = 0
     while (winlose === undefined) {
@@ -1071,7 +1114,7 @@ function run_state (state) {
         var next_monster = get_next_monster(state);
 
         if (!!next_monster) {
-            logger.add_debug_log("It is " + next_monster.name + "'s turn.");
+            logger.add_debug_log("It's " + next_monster.name + "(" + next_monster.position + ")'s turn.");
             monster_take_turn(next_monster, state);
         }
 
@@ -1091,19 +1134,22 @@ function run_state (state) {
             state.scenario_side.monsters[i].atb += 0.07 * state.scenario_side.monsters[i].spd;
         }
     }
-    logger.add_debug_log("winlose = " + winlose);
+
+    if (winlose === 1) logger.add_debug_log("Victory");
+    else logger.add_debug_log("Second place");
+    
     return winlose; 
 }
 
 function get_value (id) {
     "use strict";
-    var valueString = document.getElementById(id).value;
+    var value_string = document.getElementById(id).value;
 
-    if (/^[a-zA-Z-]+\S*[a-zA-z]+$/g.test(valueString)) {
-        return valueString;
+    if (/^[a-zA-Z-]+\S*[a-zA-z]+$/g.test(value_string)) {
+        return value_string;
     }
 
-    var value = valueString.split("+").reduce(function (x, y) {
+    var value = value_string.split("+").reduce(function (x, y) {
         return parseInt(x) + parseInt(y);
     }, 0);
 
@@ -1153,7 +1199,7 @@ function run_simulation() { //id, entry, level, star, hp, atk, def, spd, critrat
     var skill_4_level = get_value("skill-4-level");
 
     var farmer = {
-        name: MONSTER_NAME,
+        name: monster_name,
         id: farmer_id,
         attribute: monster_entry.attribute,
         maxhp: monster_basehp * (100 + glory_hp) / 100 + monster_addhp,
@@ -1177,7 +1223,8 @@ function run_simulation() { //id, entry, level, star, hp, atk, def, spd, critrat
 
         side: "farmer_side",
         opposing_side: "scenario_side",
-        position: 1
+        position: 0,
+        posname: monster_name + "(0)"
 
     };
     

@@ -3,25 +3,20 @@
 <head>
 	<meta charset="utf-8" />
 	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+	<link href='https://fonts.googleapis.com/css?family=Tangerine:700' rel='stylesheet' type='text/css'>
 	<link type="text/css" rel="stylesheet" href="css/swsim.css"/>
 	<title>SWSIM</title>
 </head>
 
 <body>
-<!--<h1>SWSIM</h1>-->
-
 <div id="tabs-container">
 	<ul id="tabs-menu">
-		<li class="current"><a href="#tab-home">HOME</a></li>
-		<li><a href="#tab-load">LOAD</a></li>
-		<li><a href="#tab-sim">SIM</a></li>
+		<li class="tab current-tab" data-content-tab="home-tab"><i class="fa fa-home" aria-hidden="true"></i>&nbsp;&nbsp;HOME</li>
+		<li class="tab" data-content-tab="sim-tab"><i class="fa fa-play" aria-hidden="true"></i>&nbsp;&nbsp;SIM</li>
 	</ul>
 
 	<div id="tabs">
-		<div id="home-tab" class="tab-content selected-tab">
-
-		</div>
-		<div id="load-tab" class="tab-content">
+		<div id="home-tab" class="tab-content current-tab-content">
 		</div>
 		<div id="sim-tab" class="tab-content">
 			<div id="monster"> 
@@ -465,6 +460,8 @@
 	</div>
 
 </div>
+<footer><span>Coded with love by <a href="https://www.reddit.com/u/_Esmyth" target="_blank">/u/_Esmyth</a></span>
+</footer>
 <div id="backdrop"></div>
 
 <script src="https://use.fontawesome.com/f220b420f1.js"></script>

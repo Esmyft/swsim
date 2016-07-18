@@ -51,6 +51,10 @@ a {
 	background-color: #B8B8B8;
 }
 
+.fa {
+	background-color: inherit;
+}
+
 #tabs-container {
 	height: auto;
 	overflow: auto;
@@ -73,6 +77,7 @@ a {
 
 	border-left: 1px solid black;
 	border-bottom: 1px solid black;
+	cursor: pointer;
 }
 
 #tab-menu li.selected {
@@ -96,14 +101,21 @@ a {
 	margin-right: auto;
 	min-height: 100%;
 	overflow: hidden;
-	display: block;
+	display: none;
 	margin-right: auto;
 
 }
 
+.current-tab {
+	background-color: #B8B8B8;	
+}
+
+.current-tab-content {
+	display: block;
+}
+
 #monster-top {
 	display: block;
-
 }
 
 #monster-portrait-container {
@@ -533,6 +545,30 @@ td span {
 	display: inline-block;
 	margin: 20px;
 	text-transform: uppercase;
+}
+
+footer {
+	position: absolute;
+	width: 100%;
+	bottom: 0px;
+	background-color: rgba(0, 0, 0, 0);
+
+}
+
+
+footer span {
+	margin: 15px 15px 15px 10px;
+	font-size: 20px;
+	float: right;
+
+	
+}
+
+footer span a {
+	text-decoration: none;
+	font-family: "Tangerine";
+	font-size: 27px;
+	font-weight: bold;
 }
 
 #backdrop {
