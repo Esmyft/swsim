@@ -367,6 +367,21 @@ function select_tab () {
 	}
 }
 
+function clear_result () {
+	document.getElementById("result-farmer").innerHTML = "";
+	document.getElementById("result-map").innerHTML = "";
+	document.getElementById("result-wins").innerHTML = "";
+	document.getElementById("result-battles").innerHTML = "";
+	var parent_node = document.getElementById("log-container");
+	while (!!parent_node.lastChild) {
+		parent_node.removeChild(parent_node.lastChild);
+	}
+}
+
+// Sim Window
+document.getElementById("clear-button").addEventListener("click", clear_result);
+
+// Load Window
 document.addEventListener("DOMContentLoaded", populate_build_list);
 document.getElementById("load-save-btn").addEventListener("click", show_loader);
 document.getElementById("load-save-btn").addEventListener("click", reset_load_display);
@@ -384,3 +399,5 @@ var tabs = document.getElementsByClassName("tab");
 for (i = 0; i < tabs.length;i++) {
 	tabs[i].addEventListener("click", select_tab);
 }
+
+

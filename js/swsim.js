@@ -1,4 +1,7 @@
 /*jslint browser:true */
+"use strict";
+
+//// Start of fundamental functions 
 
 // function to allow comparison between Arrays
 function array_equals(array1, array2) {
@@ -36,110 +39,20 @@ function array_has(array, el) {
     return false;
 }
 
-// ------
-var MONSTER_NAME = "soha_awakened";
-var temp;
+function capitalise (string) {
+    var words = string.split(/[\s-]+/);
+    var i;
+    for (i = 0; i < words.length; i += 1) {
+        var word = words[i];
+        words[i] = word.charAt(0).toUpperCase() + word.slice(1); 
+    }
+    return words.join(" ");
+}
 
-/**
-var monster_stats = {
-    sieq: {
-        type: "fire",
-        "2": {
-            maxhp: [915, 945, 975, 1005, 1050, 1080, 1125, 1155, 1200, 1230, 1275, 1320, 1365, 1410, 1455, 1515, 1560, 1620, 1665, 1725],
-            attack: [99, 102, 106, 110, 113, 117, 121, 125, 130, 134, 139, 144, 148, 154, 159, 164, 170, 176, 182, 188],
-            defense: [56, 58, 60, 62, 64, 66, 69, 71, 73, 76, 78, 81, 84, 87, 90, 93, 96, 99, 102, 106]
-        },
-        "3": {
-            maxhp: [1380, 1410, 1455, 1485, 1530, 1560, 1605, 1635, 1680, 1725, 1770, 1815, 1860, 1905, 1950, 1995, 2040, 2100, 2145, 2205, 2250, 2310, 2370, 2430, 2490],
-            attack: [150, 154, 158, 162, 166, 170, 174, 178, 183, 187, 192, 197, 202, 207, 212, 217, 223, 228, 234, 240, 246, 252, 258, 264, 271],
-            defense: [85, 87, 89, 91, 94, 96, 98, 101, 103, 106, 109, 111, 114, 117, 120, 123, 126, 129, 132, 135, 139, 142, 146, 149, 153]
-        },
-        "4": {
-            maxhp: [1995, 2025, 2070, 2100, 2145, 2190, 2220, 2265, 2310, 2355, 2400, 2445, 2490, 2535, 2580, 2625, 2670, 2715, 2775, 2820, 2880, 2925, 2985, 3045, 3090, 3150, 3210, 3270, 3330, 3390],
-            attack: [216, 220, 224, 228, 232, 237, 241, 246, 250, 255, 260, 264, 269, 274, 279, 285, 290, 295, 301, 306, 312, 318, 324, 330, 336, 342, 348, 355, 361, 368],
-            defense: [122, 124, 127, 129, 131, 134, 136, 139, 141, 144, 147, 149, 152, 155, 158, 161, 164, 167, 170, 173, 176, 180, 183, 186, 190, 193, 197, 200, 204, 208]
-        },
-        "5": {
-            maxhp: [2715, 2760, 2805, 2850, 2895, 2940, 2985, 3030, 3075, 3120, 3165, 3225, 3270, 3330, 3375, 3435, 3480, 3540, 3585, 3645, 3705, 3765, 3825, 3885, 3945, 4005, 4065, 4125, 4200, 4260, 4320, 4395, 4470, 4530, 4605],
-            attack: [295, 300, 304, 309, 314, 319, 324, 329, 334, 339, 345, 350, 355, 361, 367, 372, 378, 384, 390, 396, 402, 409, 415, 422, 428, 435, 442, 449, 456, 463, 470, 477, 485, 492, 500],
-            defense: [166, 169, 171, 174, 177, 180, 182, 185, 188, 191, 194, 197, 200, 204, 207, 210, 213, 217, 220, 224, 227, 231, 234, 238, 242, 246, 250, 254, 258, 262, 266, 270, 274, 279, 283]
-        },
-        "6": {
-            maxhp: [3675, 3720, 3780, 3825, 3885, 3930, 3990, 4050, 4095, 4155, 4215, 4275, 4335, 4395, 4455, 4515, 4575, 4635, 4695, 4755, 4830, 4890, 4965, 5025, 5100, 5175, 5235, 5310, 5385, 5460, 5535, 5610, 5685, 5760, 5850, 5925, 6000, 6090, 6165, 6255],
-            attack: [400, 405, 411, 417, 422, 428, 434, 440, 446, 452, 458, 465, 471, 478, 484, 491, 498, 504, 511, 518, 525, 533, 540, 547, 555, 563, 570, 578, 586, 594, 602, 611, 619, 627, 636, 645, 654, 663, 672, 681],
-            defense: [226, 229, 232, 235, 239, 242, 245, 249, 252, 255, 259, 262, 266, 270, 273, 277, 281, 285, 289, 293, 297, 301, 305, 309, 313, 317, 322, 326, 331, 335, 340, 344, 349, 354, 359, 364, 369, 374, 379, 384]
-        },
-        speed: 109
-    },
-    sieq_awakened: {
-        type: "fire",
-        "2": {
-            maxhp: [915, 945, 975, 1005, 1050, 1080, 1125, 1155, 1200, 1230, 1275, 1320, 1365, 1410, 1455, 1515, 1560, 1620, 1665, 1725],
-            attack: [120, 124, 128, 133, 137, 142, 147, 152, 157, 162, 168, 174, 179, 186, 192, 198, 205, 212, 220, 227],
-            defense: [59, 61, 63, 65, 68, 70, 72, 75, 77, 80, 83, 86, 88, 91, 95, 98, 101, 105, 108, 112]
-        },
-        "3": {
-            maxhp: [1380, 1410, 1455, 1485, 1530, 1560, 1605, 1635, 1680, 1725, 1770, 1815, 1860, 1905, 1950, 1995, 2040, 2100, 2145, 2205, 2250, 2310, 2370, 2430, 2490],
-            attack: [182, 186, 191, 196, 201, 206, 211, 216, 221, 227, 232, 238, 244, 250, 256, 262, 269, 276, 282, 289, 297, 304, 311, 319, 327],
-            defense: [90, 92, 94, 97, 99, 102, 104, 107, 109, 112, 115, 117, 120, 123, 126, 129, 133, 136, 139, 143, 146, 150, 153, 157, 161]
-        },
-        "4": {
-            maxhp: [1995, 2025, 2070, 2100, 2145, 2190, 2220, 2265, 2310, 2355, 2400, 2445, 2490, 2535, 2580, 2625, 2670, 2715, 2775, 2820, 2880, 2925, 2985, 3045, 3090, 3150, 3210, 3270, 3330, 3390],
-            attack: [262, 267, 272, 277, 282, 287, 292, 298, 303, 309, 315, 321, 327, 333, 339, 345, 351, 358, 365, 371, 378, 385, 392, 400, 407, 414, 422, 430, 438, 446],
-            defense: [129, 131, 134, 136, 139, 141, 144, 147, 149, 152, 155, 158, 161, 164, 167, 170, 173, 176, 180, 183, 186, 190, 193, 197, 201, 204, 208, 212, 216, 220]
-        },
-        "5": {
-            maxhp: [2715, 2760, 2805, 2850, 2895, 2940, 2985, 3030, 3075, 3120, 3165, 3225, 3270, 3330, 3375, 3435, 3480, 3540, 3585, 3645, 3705, 3765, 3825, 3885, 3945, 4005, 4065, 4125, 4200, 4260, 4320, 4395, 4470, 4530, 4605],
-            attack: [356, 362, 367, 373, 379, 385, 391, 397, 403, 410, 416, 423, 429, 436, 443, 450, 457, 464, 471, 479, 486, 494, 502, 510, 518, 526, 534, 542, 551, 560, 568, 577, 586, 596, 605],
-            defense: [176, 179, 182, 184, 187, 190, 193, 196, 199, 203, 206, 209, 212, 216, 219, 222, 226, 229, 233, 237, 240, 244, 248, 252, 256, 260, 264, 268, 272, 277, 281, 285, 290, 294, 299]
-        },
-        "6": {
-            maxhp: [3675, 3720, 3780, 3825, 3885, 3930, 3990, 4050, 4095, 4155, 4215, 4275, 4335, 4395, 4455, 4515, 4575, 4635, 4695, 4755, 4830, 4890, 4965, 5025, 5100, 5175, 5235, 5310, 5385, 5460, 5535, 5610, 5685, 5760, 5850, 5925, 6000, 6090, 6165, 6255],
-            attack: [484, 491, 497, 504, 511, 518, 525, 532, 540, 547, 555, 562, 570, 578, 586, 594, 602, 610, 618, 627, 635, 644, 653, 662, 671, 680, 690, 699, 709, 718, 728, 738, 748, 758, 769, 779, 790, 801, 812, 823],
-            defense: [239, 242, 246, 249, 252, 256, 259, 263, 266, 270, 274, 278, 281, 285, 289, 293, 297, 301, 305, 309, 314, 318, 322, 327, 331, 336, 340, 345, 350, 354, 359, 364, 369, 374, 379, 385, 390, 395, 401, 406]
-        },
-        speed: 110
-    }
-    soha: {
-        type: "water",
-        "4": {
-            maxhp: [2355, 2400, 2445, 2490, 2535, 2580, 2625, 2670, 2730, 2775, 2835, 2880, 2940, 2985, 3045, 3105, 3150, 3210, 3270, 3330, 3390, 3465, 3525, 3585, 3660, 3720, 3795, 3855, 3930, 4005],
-            attack: [244, 249, 253, 258, 263, 268, 272, 278, 283, 288, 293, 299, 304, 310, 316, 322, 328, 334, 340, 346, 353, 359, 366, 373, 379, 386, 394, 401, 408, 416],
-            defense: [175, 178, 182, 185, 188, 192, 195, 199, 202, 206, 210, 214, 218, 222, 226, 230, 234, 239, 243, 247, 252, 257, 261, 266, 271, 276, 281, 286, 292, 297]
-        },
-        "5": {
-            maxhp: [3210, 3255, 3315, 3360, 3420, 3465, 3525, 3585, 3630, 3690, 3750, 3810, 3870, 3930, 3990, 4050, 4110, 4185, 4245, 4320, 4380, 4455, 4515, 4590, 4665, 4740, 4815, 4890, 4965, 5040, 5115, 5190, 5280, 5355, 5445],
-            attack: [333, 338, 344, 349, 354, 360, 366, 371, 377, 383, 389, 395, 401, 408, 414, 420, 427, 434, 441, 447, 454, 462, 469, 476, 484, 491, 499, 507, 515, 523, 531, 539, 548, 556, 565],
-            defense: [238, 242, 246, 249, 253, 257, 261, 265, 270, 274, 278, 282, 287, 291, 296, 301, 305, 310, 315, 320, 325, 330, 335, 340, 346, 351, 357, 362, 368, 374, 380, 386, 392, 398, 404]
-        },
-        "6": {
-            maxhp: [4365, 4425, 4485, 4545, 4605, 4665, 4740, 4800, 4860, 4935, 4995, 5070, 5130, 5205, 5280, 5355, 5430, 5505, 5580, 5655, 5730, 5805, 5880, 5970, 6045, 6135, 6210, 6300, 6390, 6465, 6555, 6645, 6735, 6825, 6930, 7020, 7110, 7215, 7305, 7410],
-            attack: [452, 458, 464, 471, 477, 484, 491, 497, 504, 511, 518, 525, 532, 540, 547, 555, 562, 570, 578, 586, 594, 602, 610, 618, 627, 635, 644, 653, 662, 671, 680, 690, 699, 709, 718, 728, 738, 748, 759, 769],
-            defense: [323, 327, 332, 336, 341, 346, 350, 355, 360, 365, 370, 375, 380, 385, 391, 396, 402, 407, 413, 418, 424, 430, 436, 442, 448, 454, 460, 466, 473, 479, 486, 492, 499, 506, 513, 520, 527, 534, 542, 549]
-        },
-        speed: 101
-    },
-    soha_awakened: {
-        type: "water",
-        "4": {
-            maxhp: [2625, 2670, 2730, 2775, 2820, 2880, 2925, 2985, 3030, 3090, 3150, 3210, 3270, 3330, 3390, 3450, 3510, 3585, 3645, 3705, 3780, 3855, 3915, 3990, 4065, 4140, 4215, 4290, 4380, 4455],
-            attack: [279, 284, 289, 295, 300, 306, 311, 317, 323, 329, 335, 341, 348, 354, 361, 367, 374, 381, 388, 395, 403, 410, 418, 425, 433, 441, 450, 458, 466, 475],
-            defense: [175, 178, 182, 185, 188, 192, 195, 199, 202, 206, 210, 214, 218, 222, 226, 230, 234, 239, 243, 247, 252, 257, 261, 266, 271, 276, 281, 286, 292, 297]
-        },
-        "5": {
-            maxhp: [3570, 3630, 3690, 3735, 3795, 3855, 3915, 3975, 4050, 4110, 4170, 4230, 4305, 4365, 4440, 4515, 4575, 4650, 4725, 4800, 4875, 4950, 5025, 5100, 5190, 5265, 5355, 5430, 5520, 5610, 5700, 5790, 5880, 5970, 6060],
-            attack: [380, 386, 392, 398, 404, 411, 417, 424, 431, 437, 444, 451, 458, 465, 473, 480, 488, 495, 503, 511, 519, 527, 536, 544, 553, 561, 570, 579, 588, 598, 607, 616, 626, 636, 646],
-            defense: [238, 242, 246, 249, 253, 257, 261, 265, 270, 274, 278, 282, 287, 291, 296, 301, 305, 310, 315, 320, 325, 330, 335, 340, 346, 351, 357, 362, 368, 374, 380, 386, 392, 398, 404]
-        },
-        "6": {
-            maxhp: [4845, 4905, 4980, 5040, 5115, 5190, 5250, 5325, 5400, 5475, 5550, 5625, 5700, 5775, 5865, 5940, 6030, 6105, 6195, 6270, 6360, 6450, 6540, 6630, 6720, 6810, 6900, 6990, 7095, 7185, 7290, 7380, 7485, 7590, 7695, 7800, 7905, 8010, 8130, 8235],
-            attack: [517, 524, 531, 538, 546, 553, 561, 569, 576, 584, 592, 600, 609, 617, 625, 634, 642, 651, 660, 669, 678, 688, 697, 707, 716, 726, 736, 746, 756, 767, 777, 788, 798, 809, 820, 832, 843, 854, 866, 878],
-            defense: [323, 327, 332, 336, 341, 346, 350, 355, 360, 365, 370, 375, 380, 385, 391, 396, 402, 407, 413, 418, 424, 430, 436, 442, 448, 454, 460, 466, 473, 479, 486, 492, 499, 506, 513, 520, 527, 534, 542, 549]
-        },
-        speed: 102
-    }
-};
-**/
+//// End of fundamental functions
+
+//// Start of simulator functions
+var temp;
 
 var monster_id = {
     lapis: 19801,
@@ -240,47 +153,58 @@ var scenario = {  //name, base_monster_id, attribute, con, atk, def, spd, resist
 };
 
 var logger = {
-    logs_list: [],
-    log: function (msg) {
-        "use strict";
-        var new_entry = document.createElement("div");
-        new_entry.className = "log-entry";
-        new_entry.innerHTML = msg;
-        document.getElementById("log-container").appendChild(new_entry);
-
-        //this.logs_list[this.logs_list.length] = new_entry;
-
-        return new_entry;
+    document_fragment: document.createDocumentFragment(),
+    get options () {
+        return {
+            show_battle_log: document.getElementById("battle-log-checkbox").checked,
+            show_status_log: document.getElementById("status-log-checkbox").checked,
+        };
     },
-    add_battle_log: function (monster_name) {
+    add_result_log: function (monster_name, scenario_name) {
         "use strict";
-        var battle_log = {monster_name: monster_name, wins: 0, total: 0};
-        var new_entry = document.createElement("div");
-        new_entry.className = "log-entry";
-        new_entry.innerHTML = "Farmer: " + battle_log.monster_name;
-        new_entry.appendChild(document.createElement("br"));
-        new_entry.innerHTML += "Wins: " + battle_log.wins + "/" + battle_log.total;
+        var result_log = {monster_name: monster_name, map: map, wins: 0, total: 0};
+        document.getElementById("result-farmer").innerHTML = monster_name;
+        document.getElementById("result-map").innerHTML = scenario_name;
+        document.getElementById("result-wins").innerHTML = 0;
+        document.getElementById("result-battles").innerHTML = 0;
 
-        document.getElementById("log-container").appendChild(new_entry);
-        battle_log.child_div = new_entry;
-
-        this.logs_list[this.logs_list.length] = new_entry;
-        return battle_log;
+        return result_log;
     },
-    update_battle_log: function (battle_log, wins, total) {
+    update_result_log: function (result_log, wins, total) {
         "use strict";
-        battle_log.wins = wins;
-        battle_log.total = total;
-        battle_log.child_div.innerHTML = "Farmer: " + battle_log.monster_name + "\n" + "Wins:" + battle_log.wins + "/" + battle_log.total;
+        result_log.wins = wins;
+        result_log.total = total;
 
-        return battle_log;
+        document.getElementById("result-wins").innerHTML = result_log.wins;
+        document.getElementById("result-battles").innerHTML = result_log.total;
 
+        return result_log;
     },
-    add_debug_log: function (string) {
-        var debug_div = document.createElement("div");
-        debug_div.className = "debug-entry";
-        debug_div.innerHTML = string;
-        document.getElementById("log-container").appendChild(debug_div);
+    add_battle_log: function (string) {
+        "use strict";
+        var battle_log_div = document.createElement("div");
+        battle_log_div.className = "battle-entry log-entry";
+        battle_log_div.innerHTML = string;
+
+        if (this.options.show_battle_log) {
+            this.document_fragment.appendChild(battle_log_div);
+        }
+        return battle_log_div;
+    },
+    add_error_log: function (string) {
+        "use strict";
+        var error_log_div = document.createElement("div");
+        error_log_div.className = "error-entry log-entry";
+        error_log_div.innerHTML = string;
+        this.document_fragment.appendChild(error_log_div);
+        this.append_document_fragment();
+
+        error_log_div.scrollIntoView();
+        return error_log_div;
+    },
+    append_document_fragment: function () {
+        "use strict";
+        document.getElementById("log-container").appendChild(this.document_fragment);
     }
 };
 
@@ -323,7 +247,7 @@ function clone (obj) {
         return copy;
     }
 
-    logger.log("Error in cloning." + obj);
+    logger.add_error_log("Error in cloning." + obj);
 }
 
 function change_debug_mode () {
@@ -353,7 +277,6 @@ function change_debug_mode () {
         }
     }
 }
-document.getElementById("debug-mode-checkbox").addEventListener("click", change_debug_mode, false);
 
 function get_skill_cooldowns (monster_data) {
     "use strict";
@@ -646,7 +569,7 @@ function calculate_raw_damage (monster, target, multiplier_array, state, attack_
 
 function get_next_wave (state) {
     "use strict";
-    logger.add_debug_log("Wave " + state.wave + " end");
+    logger.add_battle_log("Wave " + state.wave + " end");
     state.scenario_side.monsters = state.scenario_side.monsters_remaining.splice(0, 1)[0];
     var i;
     for (i = 0; i < state.farmer_side.monsters.length; i += 1) {
@@ -664,7 +587,7 @@ function get_next_wave (state) {
         }
     }
     state.wave += 1;
-    logger.add_debug_log("Wave " + state.wave);
+    logger.add_battle_log("Wave " + state.wave);
 }
 
 function has_elemental_advantage (monster, target) {
@@ -721,7 +644,7 @@ function monster_take_damage (monster, damage) {
         damage_dealt = damage;
     }
 
-    logger.add_debug_log(monster.posname + " takes " + Math.round(damage_dealt) + " damage!");
+    logger.add_battle_log(monster.posname + " takes " + Math.round(damage_dealt) + " damage!");
 
     return {is_fatal_blow: is_fatal_blow, damage_dealt: damage_dealt};
 }
@@ -731,7 +654,7 @@ function monster_regain_hp (monster, heal_amount, effect_name) {
     var oldhp = monster.currhp;
     monster.currhp = Math.min(monster.currhp + heal_amount, monster.maxhp);
     var actual_heal_amount = monster.currhp - oldhp;
-    logger.add_debug_log(monster.posname + " heals for " + Math.round(actual_heal_amount) + " due to " + effect_name);
+    logger.add_battle_log(monster.posname + " heals for " + Math.round(actual_heal_amount) + " due to " + effect_name);
 
 }
 
@@ -981,7 +904,7 @@ function monster_use_skill (monster, state, skill_id, optional_target) {
         if (interaction[0] === "ATTACK") {
             if (interaction[1] === "SINGLE") {
                 target = optional_target || monster.target;
-                logger.add_debug_log(monster.posname + " uses " + SWData.skills[skill_id]["description_en"] + " on " + target.name + "(" + target.position + ")");
+                logger.add_battle_log(monster.posname + " uses " + SWData.skills[skill_id]["description_en"] + " on " + target.name + "(" + target.position + ")");
 
                 var attack_result = monster_attack(monster, target, state, skill_id, interaction);
                 attack_results[attack_results.length] = attack_result;
@@ -990,7 +913,7 @@ function monster_use_skill (monster, state, skill_id, optional_target) {
 
             }
             else if (interaction[1] === "AOE") {
-                logger.add_debug_log(monster.posname + " uses " + SWData.skills[skill_id]["description_en"] + " on opponent team!");
+                logger.add_battle_log(monster.posname + " uses " + SWData.skills[skill_id]["description_en"] + " on opponent team!");
                 for (i = 0; i < state[monster.opposing_side].monsters.length; i += 1) {
                     if (state[monster.opposing_side].monsters[i].is_dead) continue;
 
@@ -1010,7 +933,7 @@ function monster_use_skill (monster, state, skill_id, optional_target) {
                 for (i = 0; i < state[side].monsters.length; i += 1) {
                     if (state[side].monsters[i].is_dead === true) continue;
 
-                    logger.add_debug_log(monster.posname + " casts " + SWData.skills[skill_id]["description_en"] + " on all allies!");
+                    logger.add_battle_log(monster.posname + " casts " + SWData.skills[skill_id]["description_en"] + " on all allies!");
                     monster_buff(monster, state[side].monsters[i], skill_id, interaction);
                 }
             }
@@ -1019,7 +942,7 @@ function monster_use_skill (monster, state, skill_id, optional_target) {
         else if (interaction[0] === "TEAMATTACK") {
             if (interaction[1] === "SINGLE") {
                 target = optional_target || monster.target;
-                logger.add_debug_log(monster.posname + " uses " + SWData.skills[skill_id]["description_en"] + " on " + target.posname);
+                logger.add_battle_log(monster.posname + " uses " + SWData.skills[skill_id]["description_en"] + " on " + target.posname);
                 monster_teamattack(monster, target, state, skill_id, interaction);
             }
         }
@@ -1032,7 +955,7 @@ function monster_use_skill (monster, state, skill_id, optional_target) {
 
         if (attack_result.is_fatal_blow) {
             monsters_just_died[monsters_just_died.length] = attack_result.defender;
-            logger.add_debug_log(attack_result.defender.posname + " has died!");
+            logger.add_battle_log(attack_result.defender.posname + " has died!");
         }
     }
      
@@ -1089,7 +1012,7 @@ function monster_take_turn (monster, state) {
 function run_state (state) {
     "use strict";
     var winlose; 
-    logger.add_debug_log("Wave 1");
+    logger.add_battle_log("Wave 1");
     //win -> winlose = 1, 
     //lose -> winlose = 0
     while (winlose === undefined) {
@@ -1114,7 +1037,7 @@ function run_state (state) {
         var next_monster = get_next_monster(state);
 
         if (!!next_monster) {
-            logger.add_debug_log("It's " + next_monster.name + "(" + next_monster.position + ")'s turn.");
+            logger.add_battle_log("It's " + next_monster.name + "(" + next_monster.position + ")'s turn.");
             monster_take_turn(next_monster, state);
         }
 
@@ -1135,30 +1058,72 @@ function run_state (state) {
         }
     }
 
-    if (winlose === 1) logger.add_debug_log("Victory");
-    else logger.add_debug_log("Second place");
+    if (winlose === 1) logger.add_battle_log("VICTORY");
+    else logger.add_battle_log("SECOND PLACE");
     
     return winlose; 
 }
 
-function get_value (id) {
+function get_value (id, expected_type) {
     "use strict";
-    var value_string = document.getElementById(id).value;
+    var str = document.getElementById(id).value;
 
-    if (/^[a-zA-Z-]+\S*[a-zA-z]+$/g.test(value_string)) {
-        return value_string;
+    //To check if value_string is indeed of expected_type
+    if ((expected_type === "number" || expected_type === "integer") && !(!isNaN(parseFloat(str)) && isFinite(str))) {
+        logger.add_error_log(str + " is not " + expected_type);
+        return;
     }
 
-    var value = value_string.split("+").reduce(function (x, y) {
+    if (expected_type === "integer" && (parseInt(str) !== parseFloat(str))) {
+        logger.add_error_log(str + " is not " + expected_type);
+        return;
+    }
+
+    if (/^[a-zA-Z-]+\S*[a-zA-z]+$/g.test(str)) {
+        return str;
+    }
+
+    var value = str.split("+").reduce(function (x, y) {
         return parseInt(x) + parseInt(y);
     }, 0);
 
     return value;
 }
 
+function run_simulation_outer (farmer, scenario_array, result_log, num_of_simulations) {
+    var wins = 0;
+    var total = 0;
+
+    var run_simulation_inner = function () {
+        if (total === num_of_simulations) {
+            return;
+        }
+
+        if (total === 0) {
+            result_log = logger.update_result_log(result_log, wins, total);
+        }
+
+        logger.add_battle_log("Beginning simulation " + (total + 1));
+        var state = new State(farmer, scenario_array);
+        wins += run_state(state);
+        total += 1;
+
+
+        if (total % 100 === 0 || total === num_of_simulations) {
+            result_log = logger.update_result_log(result_log, wins, total);
+            setTimeout(run_simulation_inner, 100);
+            return;
+        }
+
+        run_simulation_inner();
+    }
+    return run_simulation_inner;
+}
+
 function run_simulation() { //id, entry, level, star, hp, atk, def, spd, critrate, critdmg, 
     "use strict";
-    var monster_name = get_value("monster-selector");
+    var monster_name = get_value("monster-selector", null);
+    var proper_monster_name = capitalise(monster_name);
     if (get_value("monster-awakened-selector") === "yes") {
         monster_name += "_awakened";
     }
@@ -1166,20 +1131,20 @@ function run_simulation() { //id, entry, level, star, hp, atk, def, spd, critrat
     var monster_entry = SWData.mons[farmer_id];
     var monster_attribute_string = ["water", "fire", "wind", "light", "dark", "neutral"][monster_entry.attribute - 1];
 
-    var monster_level = get_value("monster-level-input");
-    var monster_star = get_value("monster-stars-input");
-    var monster_basehp = get_value("monster-basehp");
-    var monster_addhp = get_value("monster-addhp");
-    var monster_baseatk = get_value("monster-baseatk");
-    var monster_addatk = get_value("monster-addatk");
-    var monster_basedef = get_value("monster-basedef");
-    var monster_adddef = get_value("monster-adddef");
-    var monster_basespd = get_value("monster-basespd");
-    var monster_addspd = get_value("monster-addspd");
-    var monster_critrate = get_value("monster-critrate");
-    var monster_critdmg = get_value("monster-critdmg");
-    var monster_res = get_value("monster-resist");
-    var monster_acc = get_value("monster-accuracy");
+    var monster_level = get_value("monster-level-input", "integer");
+    var monster_star = get_value("monster-stars-input", "integer");
+    var monster_basehp = get_value("monster-basehp", "number");
+    var monster_addhp = get_value("monster-addhp", "number");
+    var monster_baseatk = get_value("monster-baseatk", "number");
+    var monster_addatk = get_value("monster-addatk", "number");
+    var monster_basedef = get_value("monster-basedef", "number");
+    var monster_adddef = get_value("monster-adddef", "number");
+    var monster_basespd = get_value("monster-basespd", "number");
+    var monster_addspd = get_value("monster-addspd", "number");
+    var monster_critrate = get_value("monster-critrate", "number");
+    var monster_critdmg = get_value("monster-critdmg", "number");
+    var monster_res = get_value("monster-resist", "number");
+    var monster_acc = get_value("monster-accuracy", "number");
     /*
     var glory_fire = get_value("glory-fire");
     var glory_water = get_value("glory-water");
@@ -1187,16 +1152,26 @@ function run_simulation() { //id, entry, level, star, hp, atk, def, spd, critrat
     var glory_light = get_value("glory-light");
     var glory_dark = get_value("glory-dark");
     */
-    var glory_hp = get_value("glory-hp");
-    var glory_atk = get_value("glory-attack");
-    var glory_elematk = get_value("glory-" + monster_attribute_string);
-    var glory_def = get_value("glory-defense");
-    var glory_spd = get_value("glory-speed");
-    var glory_critdmg = get_value("glory-critdamage");
-    var skill_1_level = get_value("skill-1-level");
-    var skill_2_level = get_value("skill-2-level");
-    var skill_3_level = get_value("skill-3-level");
-    var skill_4_level = get_value("skill-4-level");
+    var glory_hp = get_value("glory-hp", "number");
+    var glory_atk = get_value("glory-attack", "number");
+    var glory_elematk = get_value("glory-" + monster_attribute_string, "number");
+    var glory_def = get_value("glory-defense", "number");
+    var glory_spd = get_value("glory-speed", "number");
+    var glory_critdmg = get_value("glory-critdamage", "number");
+    var skill_1_level = get_value("skill-1-level", "integer");
+    var skill_2_level = get_value("skill-2-level", "integer");
+    var skill_3_level = get_value("skill-3-level", "integer");
+    var skill_4_level = get_value("skill-4-level", "integer");
+
+    var all_input = [monster_name, monster_level, monster_star, monster_basehp, monster_addhp, monster_baseatk, monster_addatk, monster_basedef, monster_adddef, monster_basespd, monster_addspd, monster_critrate, monster_critdmg, monster_res, monster_acc, glory_hp, glory_atk, glory_elematk, glory_def, glory_spd, glory_critdmg, skill_1_level, skill_2_level, skill_3_level, skill_4_level];
+    var i;
+    for (i = 0; i < all_input.length; i += 1) {
+        if (all_input[i] === null || all_input[i] === undefined || Number.isNaN(all_input[i])) {
+            return;
+        }
+    }
+
+    //logger.update_options();
 
     var farmer = {
         name: monster_name,
@@ -1229,25 +1204,29 @@ function run_simulation() { //id, entry, level, star, hp, atk, def, spd, critrat
     };
     
     var scenario_name = get_value("map");
-    var num_of_simulations = parseInt(get_value("number-of-sim-input"));
+
+    var num_of_simulations = parseInt(get_value("number-of-sim-input", "number"));
     if (!num_of_simulations || num_of_simulations < 0) {
-        logger.log("Invalid number of simulations.");
-        return;
+        logger.add_error_log("Invalid number of simulations.");
     }
 
     var scenario_array = scenario[scenario_name];
-    var battle_log = logger.add_battle_log(farmer.name);
+    var result_log = logger.add_result_log(proper_monster_name, capitalise(scenario_name));
 
-    var i;
-    var wins = 0;
-    var total = 0;
-    for (i = 0; i < num_of_simulations; i += 1) {
-        logger.add_debug_log("Beginning simulation " + (i + 1));
-        var state = new State(farmer, scenario_array);
-        temp = state;
-        wins += run_state(state);
-        total += 1;
-        battle_log = logger.update_battle_log(battle_log, wins, total);
+    run_simulation_outer(farmer, scenario_array, result_log, num_of_simulations)();
+
+
+        /**
+        if (i % 100 === 99) {
+            logger.append_document_fragment();
+        }
+        **/
+
+    logger.append_document_fragment();
+
+    var last_log = document.getElementById("log-container").lastElementChild;
+    if (!!last_log) {
+        last_log.scrollIntoView();
     }
 }
 
