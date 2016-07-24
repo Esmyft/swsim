@@ -315,15 +315,24 @@
 					</div>
 					<div id="button-container">
 						<button id="start-button">Start</button>
-						<button id="stop-button">Stop</button>
+						<button id="clear-button">Clear</button>
 					</div>
 					<div id="sim-options">
-						<label><input type="checkbox" id="debug-mode-checkbox" value="debug_mode"> Debug mode</label>
+						<label><input type="checkbox" id="battle-log-checkbox" value="battle-log-box">&nbsp;Show Battle Log</label>
+						<label><input type="checkbox" id="status-log-checkbox" value="status-log-box">&nbsp;Show Status Log</label>
 					</div>
 				</div>
 
 				<div id="simulation-right">
 					<div id="result-container"></div>
+						<div class="result-entry">
+							<p>Farmer:&nbsp;
+							<span id="result-farmer"></span></p>
+							<p>Map:&nbsp;
+							<span id="result-map"></span></p>
+							<p>Wins:&nbsp;
+							<span id="result-wins"></span>/<span id="result-battles"></span></p>
+						</div>
 					<div id="log-container"></div>
 				</div>
 

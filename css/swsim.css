@@ -31,8 +31,14 @@ div, ul {
 div {
 	height: 100%;
 }
+
 a {
 	text-decoration: none;
+}
+
+input[type=text] {
+	border: 1px solid #4C2882;
+	padding: 1px;
 }
 
 .button {
@@ -96,14 +102,11 @@ a {
 
 .tab-content {
 	position: relative;
-	padding-left: 20px;
-	margin-left: auto;
-	margin-right: auto;
+	margin-left: 20px;
+	margin-right: 20px;
 	min-height: 100%;
 	overflow: hidden;
 	display: none;
-	margin-right: auto;
-
 }
 
 .current-tab {
@@ -248,7 +251,7 @@ td input {
 }
 
 #simulation-left, #simulation-right {
-	display: inline-block;
+	display: block;
 	margin-left: auto;
 	margin-right: auto;
 	min-width: 350px;
@@ -261,6 +264,10 @@ td input {
 	padding-left: 15px;
 }
 
+#sim-options label {
+	display: block;
+}
+
 #simulation-right {
 	width: 65%;
 	margin: 0 0 0 auto;
@@ -269,33 +276,49 @@ td input {
 #log-container {
 	border: 1px solid black;
 	height: 200px;
-	overflow-x: hidden;
-	overflow-y: scroll;
+	overflow-y: auto;
 	width: 100%;
 }
 
-
-
-.log-entry {
+.result-entry {
 	display: inline-block;
 	padding-left: 20px;
 	padding-right: 20px;
 	word-wrap: break-word;
-	min-width: 100%;
-	margin-right: 100%;
+	width: 100%;
 	font-size: 10px;
 	height: auto;
 }
 
-.debug-entry {
-	display: none;
+.result-entry p {
+	font-size: 13px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.result-entry p:first-child {
+	margin-top: 0;
+}
+
+.result-entry p span {
+	font-size: inherit;
+}
+
+.log-entry {
 	padding-left: 20px;
 	padding-right: 20px;
 	word-wrap: break-word;
 	min-width: 100%;
-	margin-right: 100%;
 	font-size: 10px;
 	height: auto;
+}
+
+.battle-entry {
+
+}
+
+.error-entry {
+	color: red;
 }
 
 #map-container, #number-of-sim-container, #button-container {
@@ -552,6 +575,7 @@ footer {
 	width: 100%;
 	bottom: 0px;
 	background-color: rgba(0, 0, 0, 0);
+	pointer-events: none;
 
 }
 
@@ -560,8 +584,12 @@ footer span {
 	margin: 15px 15px 15px 10px;
 	font-size: 20px;
 	float: right;
-
+	opacity: 0.5;
 	
+}
+
+footer span:hover {
+	opacity: 1.0;
 }
 
 footer span a {
